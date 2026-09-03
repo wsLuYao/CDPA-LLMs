@@ -1,8 +1,8 @@
 # CDPA-LLMs
 
 <p align="center">
-  <strong>大语言模型决策偏好自动化测评与分析平台</strong><br>
-  Decision Preference Assessment Platform for Large Language Models
+  <strong>大语言模型综合决策偏好测评工具</strong><br>
+  Comprehensive Decision-Making Preference Assessment for LLMs
 </p>
 
 <p align="center">
@@ -26,7 +26,7 @@ V1.0 默认正式测评覆盖 **风险决策、模糊决策、跨期决策和道
 - **一站式测评流程**：项目创建 → 题库选择 → 模型配置 → 连接测试 → 自动施测 → 运行监控 → 报告分析 → 数据导出。
 - **四类正式决策题库**：V1.0 共 936 个正式测量条件。
 - **多模型统一测评**：单个项目可配置 1–6 个模型，并保持预设显示顺序。
-- **多接口适配**：支持 OpenAI Responses、OpenAI-compatible Chat Completions、Gemini `generateContent`，以及自定义 OpenAI 兼容端点。
+- **多接口适配**：支持 `OpenAI Responses`、`OpenAI-compatible Chat Completions`、`Gemini generate Content`，以及自定义 OpenAI 兼容端点。
 - **批量任务控制**：支持并发、请求间隔、超时、技术重试、暂停、继续、安全停止和服务器中断恢复。
 - **标准化排序解析**：保留原始响应，区分首次有效、格式修复后有效和技术失败等状态。
 - **通俗结果报告**：提供数据质量、模型画像、情境效应、重复稳定性、模型相似性和人类参照等结果。
@@ -625,44 +625,11 @@ V1.0 软件产品版本与内部组件版本分开管理：
 
 本项目用于 **大语言模型决策偏好测评与相关研究**，不是个人心理测评工具，不用于临床诊断、招聘筛选或人格评价。
 
----
-
-## 文档
-
-仓库内提供：
-
-- [`题库与指标口径.md`](./题库与指标口径.md) — 正式题库范围和核心指标解释；
-- [`硅云部署说明.md`](./硅云部署说明.md) — Ubuntu 云服务器部署教程；
-- [`V1.0冻结快照说明.md`](./V1.0冻结快照说明.md) — 冻结范围和版本边界；
-- [`V1.0版本一致性审计报告.md`](./V1.0版本一致性审计报告.md) — V1.0 审计与测试结果；
-- [`FREEZE_MANIFEST.json`](./FREEZE_MANIFEST.json) — 冻结快照机器可读清单；
-- [`VERSION.json`](./VERSION.json) — 产品及组件版本元数据。
-
----
-
-## License
-
-当前 V1.0 冻结快照 **未附带开源许可证文件**。
-
-在仓库正式公开前，建议根据源码、测评题库、人类参照数据和第三方资源的实际权属分别确认授权范围，并补充适当的 `LICENSE`。在未明确授权的情况下，请勿默认将本项目视为 MIT、Apache-2.0 或其他开放源代码许可项目。
-
----
-
-## Citation
-
-如果在研究、论文、报告或项目中使用 CDPA-LLMs，可注明：
-
-```text
-CDPA-LLMs, Version 1.0.
-Large Language Model Decision Preference Assessment Platform.
-```
-
-如后续发布正式论文、项目主页或 DOI，可在本节补充标准 BibTeX 引用信息。
 
 ---
 
 <p align="center">
   <strong>CDPA-LLMs · V1.0</strong><br>
-  Large Language Model Decision Preference Assessment Platform
+  Copyright华中师范大学心理学院
 </p>
 
