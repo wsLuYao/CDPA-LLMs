@@ -1,0 +1,9 @@
+{
+  "results": [],
+  "banks": [
+    "data_banks/cni_sample.csv",
+    "data_banks/risk_sample.csv",
+    "data_banks/intertemporal_sample.csv",
+    "data_banks/ambiguity_sample.csv"
+  ]
+}

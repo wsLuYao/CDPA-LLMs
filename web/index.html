@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#f5f7fb">
+  <title>CDPA-LLMs · AI决策偏好测评平台 · V1.0</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="is-booting">
+  <a class="skip-link" href="#mainContent">跳到主要内容</a>
+  <div class="ambient ambient-a" aria-hidden="true"></div>
+  <div class="ambient ambient-b" aria-hidden="true"></div>
+
+  <section class="auth-gate is-hidden" id="authGate" aria-labelledby="authTitle">
+    <div class="auth-stage">
+      <div class="auth-story">
+        <a class="auth-brand" href="/" aria-label="CDPA-LLMs 首页"><span class="brand-mark">CD</span><span><b>CDPA-LLMs</b><small>AI DECISION PREFERENCE ASSESSMENT · V1.0</small></span></a>
+        <div class="auth-signal"><i></i> SELF-HOSTED RESEARCH CLOUD</div>
+        <h1>看见 AI 在选择背后的<br><em>决策轨迹</em></h1>
+        <p>从模型调用、质量检查到可解释报告，让复杂的决策偏好测量成为一条清晰、可信、可追溯的在线流程。</p>
+        <div class="auth-capabilities"><span><i>12</i> 个合成示例条件</span><span><i>4</i> 类决策画像</span><span><i>1—6</i> 个模型对比</span></div>
+        <div class="auth-orbit" aria-hidden="true"><span></span><i></i><b></b><em>CDPA</em></div>
+      </div>
+      <div class="auth-panel glass-panel">
+        <div class="auth-tabs" role="tablist"><button class="is-active" type="button" data-auth-tab="login">登录</button><button type="button" data-auth-tab="register">创建账号</button></div>
+        <form id="loginForm" class="auth-form" data-auth-form="login">
+          <div class="auth-heading"><span>WELCOME BACK</span><h2 id="authTitle">进入测评工作区</h2><p>登录后继续你的测评项目与分析报告。</p></div>
+          <label class="auth-field"><span>邮箱</span><input id="loginEmail" type="email" autocomplete="email" required placeholder="name@example.com"></label>
+          <label class="auth-field"><span>密码</span><input id="loginPassword" type="password" autocomplete="current-password" minlength="10" required placeholder="至少 10 个字符"></label>
+          <button class="btn btn-primary btn-auth" type="submit">安全登录 <span>→</span></button>
+        </form>
+        <form id="registerForm" class="auth-form is-hidden" data-auth-form="register">
+          <div class="auth-heading"><span>CREATE WORKSPACE</span><h2>创建独立账号</h2><p>每个账号的项目与报告彼此隔离。</p></div>
+          <label class="auth-field"><span>邮箱</span><input id="registerEmail" type="email" autocomplete="email" required placeholder="name@example.com"></label>
+          <label class="auth-field"><span>密码</span><input id="registerPassword" type="password" autocomplete="new-password" minlength="10" required placeholder="至少 10 个字符"></label>
+          <label class="auth-field"><span>站点邀请码</span><input id="registrationCode" type="password" autocomplete="off" required placeholder="由平台管理员提供"></label>
+          <button class="btn btn-primary btn-auth" type="submit">创建并进入 <span>→</span></button>
+        </form>
+        <div class="auth-trust"><span>端到端 HTTPS</span><span>账号数据隔离</span><span>API Key 不落盘</span></div>
+        <a class="auth-deploy-link" href="/deploy.html">管理员第一次部署？打开逐步向导 →</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="app-shell is-hidden" id="appShell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#home" data-route="home" aria-label="回到首页">
+        <span class="brand-mark">CD</span>
+        <span><b>CDPA-LLMs</b><small>AI决策偏好测评平台 · V1.0</small></span>
+      </a>
+      <nav class="main-nav" aria-label="主导航">
+        <p class="nav-group-label">测评流程</p>
+        <button class="nav-item is-active" id="navHome" type="button" data-route="home"><span aria-hidden="true">⌂</span>工作台</button>
+        <button class="nav-item" id="navNew" type="button" data-route="new"><span aria-hidden="true">＋</span>新建测评</button>
+        <button class="nav-item" id="navRun" type="button" data-route="run"><span aria-hidden="true">▶</span>测评进度</button>
+        <button class="nav-item" id="navReport" type="button" data-route="report"><span aria-hidden="true">▥</span>结果报告</button>
+        <p class="nav-group-label nav-group-secondary">管理</p>
+        <button class="nav-item" id="navHistory" type="button" data-route="history"><span aria-hidden="true">↺</span>项目与导入</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <button class="nav-item" id="navHelp" type="button" data-route="help"><span aria-hidden="true">?</span>使用说明</button>
+        <div class="local-badge"><i></i><span><b id="deploymentLabel">云端在线</b><small id="deploymentNote">数据保存在专属工作区</small></span></div>
+      </div>
+    </aside>
+    <button class="sidebar-scrim" id="sidebarScrim" type="button" aria-label="关闭导航"></button>
+
+    <main class="main" id="mainContent">
+      <header class="topbar">
+        <button class="mobile-menu" id="mobileMenu" type="button" aria-label="打开导航">☰</button>
+        <div><p class="eyebrow" id="pageEyebrow">一站式测量与分析</p><h1 id="pageTitle">工作台</h1></div>
+        <div class="top-actions"><span class="privacy-pill"><i></i> API Key 不写入服务器磁盘</span><button class="tour-replay" id="tourReplayButton" type="button"><span aria-hidden="true">◎</span>新手引导</button><button class="user-chip" id="userChip" type="button" aria-label="当前账号"><span id="userInitial">U</span><b id="userEmail">—</b></button><button class="btn btn-primary top-create" type="button" data-route="new">新建测评</button><button class="icon-btn logout-button" id="logoutButton" type="button" title="退出登录" aria-label="退出登录">↗</button></div>
+      </header>
+
+      <div class="content">
+        <section class="view is-active" id="view-home" data-title="工作台" data-eyebrow="一站式测量与分析">
+          <div class="hero" id="homeHero">
+            <div class="hero-copy">
+              <span class="kicker"><i></i> 工作区已就绪</span>
+              <h2>开始一次清晰、可追溯的<br><em>AI 决策偏好测评</em></h2>
+              <p>选择测评内容，连接一个或多个模型，平台会自动完成施测、质量检查与可视化报告。第一次使用可先运行演示，不需要 API Key。</p>
+              <div class="hero-actions"><button class="btn btn-primary btn-large" type="button" data-route="new">开始一次测评</button><button class="btn btn-secondary btn-large" type="button" id="quickDemo">先用演示模型体验</button></div>
+              <div class="hero-notes"><span>12 个开源合成示例</span><span>4 类决策画像</span><span>支持 1—6 个模型</span></div>
+            </div>
+            <div class="hero-visual" id="workflowOverview" aria-label="平台流程概览">
+              <div class="flow-heading"><span>完成一次测评</span><b>只需三步</b></div>
+              <div class="flow-card"><span class="flow-num">1</span><div><b>选择测评方案</b><small>题库、重复次数与模型</small></div></div>
+              <div class="flow-line"></div>
+              <div class="flow-card"><span class="flow-num">2</span><div><b>等待自动运行</b><small>可关闭浏览器或随时暂停</small></div></div>
+              <div class="flow-line"></div>
+              <div class="flow-card accent"><span class="flow-num">3</span><div><b>阅读结果报告</b><small>偏好、情境与重复稳定性</small></div></div>
+            </div>
+          </div>
+
+          <div class="section-head"><div><span class="section-index">01</span><h2>四类决策，一份清晰报告</h2></div><p>四类结果含义不同，平台分别呈现，不合成未经验证的总分。</p></div>
+          <div class="bank-preview" id="homeBankPreview"></div>
+
+          <div class="section-head"><div><span class="section-index">02</span><h2>最近项目</h2></div><button class="text-btn" type="button" data-route="history">查看全部 →</button></div>
+          <div class="recent-grid" id="recentProjects"><div class="empty-inline">还没有项目。创建测评后，运行状态和报告会显示在这里。</div></div>
+        </section>
+
+        <section class="view" id="view-new" data-title="新建测评" data-eyebrow="三步完成配置">
+          <div class="stepper" id="measurementStepper" aria-label="配置步骤"><button class="step is-active" type="button" data-step="1"><span>1</span>选择方案</button><i></i><button class="step" type="button" data-step="2"><span>2</span>连接模型</button><i></i><button class="step" type="button" data-step="3"><span>3</span>确认启动</button></div>
+          <form id="projectForm" novalidate>
+            <div class="wizard-panel is-active" id="measurementSetupPanel" data-wizard="1">
+              <div class="panel-heading"><div><span>STEP 01</span><h2>这次想测什么？</h2><p>初次使用建议选择“完整测评”。演示方案不会调用任何外部 API。</p></div></div>
+              <div class="mode-grid">
+                <label class="mode-card"><input type="radio" name="mode" value="demo"><span class="mode-icon">◌</span><b>流程体验</b><p>本地演示模型 · 每题 1 次<br>适合先熟悉界面与报告</p><em>不产生研究数据</em></label>
+                <label class="mode-card is-recommended"><input type="radio" name="mode" value="full" checked><span class="recommend">推荐</span><span class="mode-icon">◇</span><b>完整测评</b><p>四类题库 · 每题 5 次<br>符合正式分析的重复要求</p><em>约 4,680 次调用 / 模型</em></label>
+                <label class="mode-card"><input type="radio" name="mode" value="custom"><span class="mode-icon">⌁</span><b>自定义测评</b><p>自由选择题库与重复次数<br>适合探索或分阶段运行</p><em>支持 1—6 个模型</em></label>
+              </div>
+
+              <div class="form-section">
+                <div class="form-title"><div><h3>选择测评内容</h3><p>可按需取消；四个模块不会被合成为单一分数。</p></div><button class="text-btn" type="button" id="selectAllBanks">全选</button></div>
+                <div class="bank-select-grid" id="bankSelectGrid"></div>
+              </div>
+              <div class="form-row compact-row">
+                <label class="field grow"><span>项目名称</span><input id="projectName" maxlength="80" placeholder="例如：主流大模型决策偏好对比" required></label>
+                <label class="field"><span>每题独立重复</span><select id="repetitions"><option value="1">1 次 · 探索</option><option value="3">3 次 · 初步观察</option><option value="5" selected>5 次 · 正式推荐</option><option value="10">10 次 · 高稳定性</option></select></label>
+              </div>
+              <div class="call-estimate"><span>预计调用量</span><strong id="callEstimate">4,680 次 / 模型</strong><small id="estimateNote">实际用时和费用取决于服务商；平台不会自动扣费。</small></div>
+              <div class="wizard-actions"><span></span><button class="btn btn-primary btn-large" type="button" data-next="2">下一步：连接模型</button></div>
+            </div>
+
+            <div class="wizard-panel" data-wizard="2">
+              <div class="panel-heading split"><div><span>STEP 02</span><h2>连接要测评的模型</h2><p>API Key 只保留在当前服务器进程内存，不写入项目文件。服务器重启后，恢复任务需重新填写。</p></div><button class="btn btn-secondary" type="button" id="addModel">＋ 添加模型</button></div>
+              <div class="security-note"><span>盾</span><div><b>云端隐私提示</b><p>密钥只保留在当前服务器进程内存，并随请求发往所选服务商；不会写入账号、项目、日志或导出文件。</p></div></div>
+              <div class="model-list" id="modelList"></div>
+              <details class="advanced-global">
+                <summary>运行控制（一般无需修改）</summary>
+                <div class="form-row four">
+                  <label class="field"><span>并发请求</span><input id="concurrency" type="number" min="1" max="16" value="2"></label>
+                  <label class="field"><span>请求间隔 ms</span><input id="delayMs" type="number" min="0" max="60000" value="250"></label>
+                  <label class="field"><span>技术重试</span><input id="technicalRetries" type="number" min="0" max="8" value="2"></label>
+                  <label class="field"><span>随机种子</span><input id="randomSeed" type="number" value="20260829"></label>
+                </div>
+                <div class="check-row"><label><input id="shuffleItems" type="checkbox" checked> 随机打乱题目顺序</label><label><input id="formatRepair" type="checkbox" checked> 格式不合格时尝试一次修复</label><label><input id="balanced6" type="checkbox"> 六种选项顺序完全平衡（调用量 ×6）</label></div>
+              </details>
+              <div class="wizard-actions"><button class="btn btn-secondary" type="button" data-back="1">上一步</button><button class="btn btn-primary btn-large" type="button" data-next="3">下一步：确认测评</button></div>
+            </div>
+
+            <div class="wizard-panel" data-wizard="3">
+              <div class="panel-heading"><div><span>STEP 03</span><h2>确认后开始测评</h2><p>运行中可安全暂停；已写入的结果不会丢失。</p></div></div>
+              <div class="review-layout"><div class="review-main" id="reviewSummary"></div><aside class="review-aside"><h3>启动前检查</h3><ul><li>API Key 已在各自官方平台创建</li><li>账号余额与调用限额足够</li><li>无需保持浏览器窗口打开</li><li>正式结果建议使用 5 次重复</li></ul><div class="review-total"><span>预计总调用</span><strong id="reviewCalls">—</strong></div></aside></div>
+              <label class="consent"><input id="boundaryConsent" type="checkbox"><span><b>我理解结果的适用边界</b><small>报告描述模型在本次设置下的选择模式，不构成人格、能力或临床诊断。</small></span></label>
+              <div class="wizard-actions"><button class="btn btn-secondary" type="button" data-back="2">上一步修改</button><button class="btn btn-primary btn-large" id="startProject" type="submit">开始测评</button></div>
+            </div>
+          </form>
+        </section>
+
+        <section class="view" id="view-run" data-title="测评进度" data-eyebrow="实时状态与安全控制">
+          <div id="runEmpty" class="empty-state"><div>▶</div><h2>当前没有正在查看的测评</h2><p>新建项目后，这里会显示模型进度、有效回答与最近结果。</p><button class="btn btn-primary" type="button" data-route="new">新建测评</button></div>
+          <div id="runContent" class="is-hidden">
+            <div class="project-banner"><div><span class="status-dot" id="runStatusDot"></span><p class="eyebrow">当前项目</p><h2 id="runProjectName">—</h2><p id="runStatusLabel">—</p></div><div class="run-actions"><button class="btn btn-secondary" id="pauseProject" type="button">暂停</button><button class="btn btn-secondary is-hidden" id="continueProject" type="button">继续</button><button class="btn btn-danger" id="cancelProject" type="button">安全停止</button></div></div>
+            <div class="progress-card"><div class="progress-top"><span>总体进度</span><b id="overallProgressText">0%</b></div><div class="progress-track large"><i id="overallProgressBar"></i></div><div class="progress-meta"><span id="overallCount">0 / 0 次调用</span><span id="overallEta">结果按完成顺序实时落盘</span></div></div>
+            <div class="model-progress-list" id="modelProgressList"></div>
+            <div class="run-foot"><p><b>可以关闭浏览器。</b>只要云服务器保持在线，测评会继续运行；服务器重启后可重新填写密钥恢复。</p><button class="btn btn-primary is-hidden" id="viewReport" type="button">查看结果报告</button><button class="btn btn-primary is-hidden" id="resumeProject" type="button">重新填写密钥并恢复</button></div>
+          </div>
+        </section>
+
+        <section class="view" id="view-report" data-title="结果报告" data-eyebrow="直观、克制、可追溯">
+          <div id="reportEmpty" class="empty-state"><div>▥</div><h2>请选择一个已有结果的项目</h2><p>完成测评或导入历史结果后，可在这里查看报告。</p><button class="btn btn-secondary" type="button" data-route="history">选择项目</button></div>
+          <div id="reportContent" class="is-hidden report">
+            <div class="report-cover"><div><span class="report-label">AI DECISION PREFERENCE REPORT</span><h2 id="reportTitle">—</h2><p id="reportSubtitle">四类决策偏好测评 · 描述性结果</p></div><div class="report-tools"><button class="btn btn-secondary" id="printReport" type="button">打印 / PDF</button><button class="btn btn-secondary" id="exportHtml" type="button">导出网页报告</button><a class="btn btn-primary" id="downloadProject" href="#">下载完整结果</a></div></div>
+            <div class="report-quality" id="reportQuality"></div>
+            <div class="report-notice"><span>阅读提示</span><p>先看覆盖率和有效率，再看模型差异、情境变化与重复稳定性。偏好位置 50 表示两端相对平衡，不是“好坏分”；四类题库也不合成为未经验证的总分。</p></div>
+            <nav class="report-contents" aria-label="报告目录"><a href="#report-summary">01 管理摘要</a><a href="#report-landscape">02 多模型画像</a><a href="#report-profile">03 单模型详情</a><a href="#report-context">04 情境效应</a><a href="#report-stability">05 稳定性</a><a href="#report-similarity">06 相似性</a><a href="#humanSection">07 人类参照</a><a href="#report-coverage">08 覆盖与方法</a><a href="#report-reading">09 结论提示</a></nav>
+
+            <section class="report-section" id="report-summary"><div class="section-head report-head"><div><span class="section-index">01</span><h2>管理摘要与模型横向对比</h2></div><p>把完整分析压缩为可行动的质量、稳定性、情境与人类参照指标。</p></div><div class="finding-grid" id="reportFindings"></div><article class="card report-table-card"><div class="card-mini-head"><h3>模型综合观察表</h3><span>所有模型按固定顺序呈现</span></div><div class="report-table-wrap"><table class="report-data-table"><thead><tr><th>模型</th><th>有效率</th><th>首次合格</th><th>平均覆盖</th><th>首选一致</th><th>完整排序一致</th><th>情境最大跨度</th><th>人类平均绝对Gap</th></tr></thead><tbody id="modelScorecardTable"></tbody></table></div></article></section>
+
+            <section class="report-section" id="report-landscape"><div class="section-head report-head"><div><span class="section-index">02</span><h2>多模型决策画像与可分辨维度</h2></div><p>同一三级分类横向比较六个模型；跨度大表示该维度更能区分模型。</p></div><div class="report-two-col"><article class="card chart-card"><div class="card-mini-head"><h3>模型 × 三级分类偏好热图</h3><span>原始平均P，−1 至 +1</span></div><div id="publicProfileHeatmap" class="svg-chart matrix-chart"></div></article><article class="card chart-card"><div class="card-mini-head"><h3>跨模型分歧最高的维度</h3><span>最大P − 最小P</span></div><div id="divergenceChart" class="svg-chart"></div></article></div><article class="card report-table-card"><div class="card-mini-head"><h3>维度差异明细</h3><span>描述性跨度，不自动解释为统计显著</span></div><div class="report-table-wrap"><table class="report-data-table"><thead><tr><th>决策类型</th><th>三级分类</th><th>模型数</th><th>平均P</th><th>SD</th><th>跨度</th><th>最低模型</th><th>最高模型</th></tr></thead><tbody id="divergenceTable"></tbody></table></div></article></section>
+
+            <section class="report-section" id="report-profile"><div class="section-head report-head"><div><span class="section-index">03</span><h2>单模型偏好详情</h2></div><div class="model-filter"><label for="reportModel">查看模型</label><select id="reportModel"></select></div></div><div class="profile-list" id="profileList"></div></section>
+
+            <section class="report-section" id="report-context"><div class="section-head report-head"><div><span class="section-index">04</span><h2>不同情境下会变吗？</h2></div><p>同一维度在不同应用Domain中的差异；范围越大，选择越依赖具体语境。</p></div><div class="report-two-col context-layout"><article class="card chart-card"><div class="card-mini-head"><h3>情境偏好位置</h3><span>每个点为Domain平均位置</span></div><div id="domainChart" class="svg-chart"></div></article><article class="card report-table-card"><div class="card-mini-head"><h3>情境敏感维度 Top 10</h3><span>所选模型</span></div><div class="report-table-wrap compact"><table class="report-data-table"><thead><tr><th>维度</th><th>Domain数</th><th>跨度</th><th>最低 → 最高</th></tr></thead><tbody id="contextEffectsTable"></tbody></table></div></article></div></section>
+
+            <section class="report-section" id="report-stability"><div class="section-head report-head"><div><span class="section-index">05</span><h2>重复作答稳定性与首选结构</h2></div><p>同时看首选一致、完整排序一致和L1/L2/L3首选分布，避免只靠一个圆环判断。</p></div><div class="stability-grid" id="stabilityGrid"></div><div class="report-two-col"><article class="card report-table-card"><div class="card-mini-head"><h3>稳定性分解</h3><span>所选模型 · 按题库</span></div><div class="report-table-wrap compact"><table class="report-data-table"><thead><tr><th>题库</th><th>题目</th><th>首选一致</th><th>完整排序一致</th><th>P重复SD</th><th>稳定题目占比</th></tr></thead><tbody id="stabilityDetailTable"></tbody></table></div></article><article class="card chart-card"><div class="card-mini-head"><h3>逻辑首选分布</h3><span>L1 / L2 / L3</span></div><div id="optionDistributionChart" class="stacked-chart"></div></article></div></section>
+
+            <section class="report-section" id="report-similarity"><div class="section-head report-head"><div><span class="section-index">06</span><h2>模型画像相似性</h2></div><p>Pearson r 描述共同维度的相对高低模式；同时报告平均绝对差，避免把高相关误读为数值相同。</p></div><div class="report-two-col"><article class="card chart-card"><div class="card-mini-head"><h3>Pearson相关矩阵</h3><span>共享三级分类坐标</span></div><div id="publicSimilarityHeatmap" class="svg-chart matrix-chart"></div></article><article class="card report-table-card"><div class="card-mini-head"><h3>非重复模型对</h3><span>r 与平均绝对差</span></div><div class="report-table-wrap compact"><table class="report-data-table"><thead><tr><th>模型A</th><th>模型B</th><th>共享维度</th><th>Pearson r</th><th>平均绝对差</th></tr></thead><tbody id="similarityTable"></tbody></table></div></article></div></section>
+
+            <section class="report-section" id="humanSection"><div class="section-head report-head"><div><span class="section-index">07</span><h2>与同题人类样本比较</h2></div><p>人类结果是参照，不是标准答案；仅在题目内容指纹严格一致时显示。</p></div><div class="report-two-col human-layout"><article class="card chart-card"><div id="humanChart" class="svg-chart"></div><div id="humanStatus" class="chart-note"></div></article><article class="card report-table-card"><div class="card-mini-head"><h3>所选模型人类Gap摘要</h3><span>Gap = AI − Human</span></div><div id="humanGapSummary" class="summary-stat-list"></div></article></div></section>
+
+            <section class="report-section" id="report-coverage"><div class="section-head report-head"><div><span class="section-index">08</span><h2>数据覆盖、质量与方法</h2></div><p>先确认每个模型和题库的计划题目是否达到门槛，再阅读后续结论。</p></div><article class="card report-table-card"><div class="report-table-wrap"><table class="report-data-table"><thead><tr><th>模型</th><th>题库</th><th>完整题目 / 计划</th><th>覆盖率</th><th>重复门槛</th><th>正式就绪</th></tr></thead><tbody id="coverageReportTable"></tbody></table></div></article><div class="method-grid" id="reportMethod"></div></section>
+
+            <section class="report-section" id="report-reading"><div class="section-head report-head"><div><span class="section-index">09</span><h2>这份结果可以怎么读？</h2></div><p>自动观察用于定位值得复核的位置，不替代研究者的理论解释。</p></div><div class="insight-grid" id="insightGrid"></div></section>
+            <section class="boundary-box"><h3>解释边界</h3><ul id="boundaryList"></ul><a id="advancedLink" class="text-btn" href="/advanced/index.html">进入专业统计附录 →</a></section>
+          </div>
+        </section>
+
+        <section class="view" id="view-history" data-title="项目与导入" data-eyebrow="云端项目空间">
+          <div class="history-toolbar"><div><h2>测评项目</h2><p>仅显示当前账号创建或导入的项目。</p></div><div><button class="btn btn-secondary" id="importButton" type="button">导入旧结果文件夹</button><input id="folderInput" class="visually-hidden" type="file" webkitdirectory multiple accept=".csv"></div></div>
+          <div class="import-note" id="importNote"><b>可直接接入原分析平台：</b>选择包含“排序结果.csv”和“完整运行记录.csv”的文件夹；可同时识别多个模型批次。</div>
+          <div class="project-table-wrap"><table class="project-table"><thead><tr><th>项目</th><th>模型</th><th>测评内容</th><th>状态</th><th>更新时间</th><th></th></tr></thead><tbody id="projectTableBody"></tbody></table></div>
+        </section>
+
+        <section class="view" id="view-help" data-title="使用说明" data-eyebrow="第一次使用从这里开始">
+          <div class="help-intro"><span>?</span><div class="grow"><h2>四步完成一次测评</h2><p>平台已把 API 调用和描述性统计分析合并在一个流程里。</p></div><div class="help-intro-actions"><button class="btn btn-secondary" id="tourReplayButtonHelp" type="button">重新查看新手引导</button><a class="btn btn-primary" href="/deploy.html">服务器部署向导</a></div></div>
+          <div class="help-steps"><article><b>1</b><h3>选择方案</h3><p>先用演示模型体验；正式比较建议四类题库、每题 5 次。</p></article><article><b>2</b><h3>连接模型</h3><p>从服务商控制台取得 API Key。密钥不会写入服务器磁盘。</p></article><article><b>3</b><h3>等待运行</h3><p>可关闭浏览器、暂停或安全停止；结果持续写入专属项目空间。</p></article><article><b>4</b><h3>阅读报告</h3><p>先看有效率与覆盖，再看偏好方向、情境变化和稳定性。</p></article></div>
+          <div class="help-grid"><article class="card"><h3>开源演示设置</h3><dl><div><dt>题库</dt><dd>随附四类合成示例；不含正式研究题库</dd></div><div><dt>重复</dt><dd>先用 1—2 次验证流程</dd></div><div><dt>选项顺序</dt><dd>随机呈现</dd></div><div><dt>模型数量</dt><dd>1—6 个，同一项目便于横向比较</dd></div></dl></article><article class="card"><h3>常见问题</h3><details><summary>为什么示例题很少？</summary><p>公开仓库只提供无参与者数据的合成样例，用于验证题库格式、API 调用与报告流程。</p></details><details><summary>模型结果按什么顺序？</summary><p>预置名称按稳定顺序显示，其他模型随后按名称排列；排序仅影响展示，不改变数据。</p></details><details><summary>报告包含什么？</summary><p>包含质量概览、画像热图、差异维度、情境效应、重复稳定性、首选结构与模型相似度。</p></details><details><summary>为什么没有总分？</summary><p>四类题库测量含义不同，简单相加会制造未经验证的结论。</p></details><details><summary>关闭后还能继续吗？</summary><p>可以。重新启动平台，选择中断项目并重新填写各模型 API Key；已完成任务不会重做。</p></details><details><summary>专业统计在哪里？</summary><p>通俗报告底部提供“专业统计附录”，保留完整审计、公式和导出能力。</p></details></article></div>
+          <div class="warning-card"><h3>请勿过度解读</h3><p>本工具用于研究 AI 模型的决策输出模式，不用于诊断真实个人，也不将“更像人类”解释为“更正确”。比较不同模型时，请保持题库、采样参数和重复设置一致。</p></div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <template id="modelTemplate">
+    <article class="model-card">
+      <div class="model-head"><div class="model-number">M1</div><div class="grow"><input class="model-label clean-input" maxlength="60" value="模型 1" aria-label="显示名称"><p class="model-note">选择服务商后填写模型 ID 与密钥</p></div><span class="connection-state">未测试</span><button class="icon-btn remove-model" type="button" aria-label="移除模型">×</button></div>
+      <div class="form-row three">
+        <label class="field"><span>模型服务商</span><select class="provider"></select></label>
+        <label class="field"><span>模型 / 接入点 ID</span><input class="model-id" required></label>
+        <label class="field key-field"><span>API Key</span><input class="api-key" type="password" autocomplete="off" spellcheck="false"><button class="reveal-key" type="button" aria-label="显示或隐藏密钥">显示</button></label>
+      </div>
+      <div class="model-row-end"><button class="text-btn test-connection" type="button">测试连接</button><button class="text-btn toggle-model-advanced" type="button">高级设置⌄</button></div>
+      <div class="model-advanced is-hidden">
+        <div class="form-row four"><label class="field span-2"><span>API Base URL</span><input class="base-url" spellcheck="false"></label><label class="field"><span>接口模式</span><select class="api-mode"><option value="responses">Responses</option><option value="chat">Chat Completions</option><option value="gemini">Gemini REST</option><option value="mock">本地演示</option></select></label><label class="field"><span>超时（秒）</span><input class="timeout-sec" type="number" min="5" max="600" value="60"></label></div>
+        <div class="form-row four"><label class="field"><span>Temperature</span><input class="temperature" type="number" min="0" max="2" step="0.1" value="0"></label><label class="field"><span>Top P</span><input class="top-p" type="number" min="0.01" max="1" step="0.01" value="1"></label><label class="field"><span>最大输出 tokens</span><input class="max-tokens" type="number" min="16" max="4096" value="256"></label><label class="field"><span>模型 Seed（可空）</span><input class="model-seed" type="number"></label></div>
+        <label class="check-inline"><input class="send-sampling" type="checkbox" checked> 发送采样参数（部分推理模型不支持时可关闭）</label>
+      </div>
+    </article>
+  </template>
+
+  <dialog id="resumeDialog"><form method="dialog" id="resumeForm"><div class="dialog-head"><div><span>中断后恢复</span><h2>重新填写 API Key</h2><p>为了安全，密钥从不保存。厂商、模型和运行参数必须与原项目一致。</p></div><button class="icon-btn" value="cancel" aria-label="关闭">×</button></div><div id="resumeModels" class="resume-models"></div><div class="dialog-actions"><button class="btn btn-secondary" value="cancel">取消</button><button class="btn btn-primary" id="confirmResume" value="default">恢复未完成任务</button></div></form></dialog>
+  <div class="product-tour is-hidden" id="productTour" role="dialog" aria-modal="true" aria-labelledby="tourTitle" aria-describedby="tourDescription">
+    <div class="tour-spotlight" id="tourSpotlight" aria-hidden="true"></div>
+    <section class="tour-bubble" id="tourBubble" role="dialog" aria-modal="true" aria-labelledby="tourTitle" tabindex="-1">
+      <div class="tour-meta"><span id="tourCounter">1 / 8</span><button id="tourSkip" type="button">跳过引导</button></div>
+      <div class="tour-icon" id="tourIcon" aria-hidden="true">01</div>
+      <h2 id="tourTitle">欢迎来到测评工作台</h2>
+      <p id="tourDescription">用几步了解平台最常用的区域。</p>
+      <div class="tour-progress" id="tourProgress" aria-hidden="true"></div>
+      <div class="tour-actions"><button class="btn btn-secondary" id="tourBack" type="button">上一步</button><button class="btn btn-primary" id="tourNext" type="button">下一步</button></div>
+    </section>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>

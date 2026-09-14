@@ -1,0 +1,122 @@
+{
+  "component": "CDPA-LLMs 专业统计附录",
+  "analysis_core_version": "1.7.0",
+  "build_date": "2026-08-31",
+  "runtime": "Python 3 standard library + HTML5/CSS/vanilla JavaScript",
+  "external_network_required": false,
+  "required_result_files_per_batch": ["排序结果.csv", "完整运行记录.csv"],
+  "planned_repeats": {
+    "default": 5,
+    "source": "analysis configuration",
+    "not_inferred_from": ["RunID", "ImportBatchID", "maximum RepeatIndex"]
+  },
+  "identity_layers": {
+    "dataset": ["BankDatasetID", "BankPartID", "BankContentHash"],
+    "model": ["RawModelConfigID", "AnalysisModelKey"],
+    "ranking": ["DisplayedRanking", "SourceRanking", "LogicalRanking"]
+  },
+  "domain_analysis": {
+    "version": "DOMAIN_ANALYSIS_V1",
+    "source_priority": "Source_Domain -> Domain -> bankRow.Domain",
+    "domain_key": "BankDatasetID::Source_Domain",
+    "semantic_merge": false,
+    "selection_state": "independent from legacy globalFilter",
+    "mixed_group_rule": "MIXED_DOMAIN_GROUP preserves legacy P/E/D and blocks only single-Domain attribution",
+    "bank_content_hash_compatibility": "unchanged; DomainMetadataHash stored separately"
+  },
+  "model_identity_policy": {
+    "policy_id": "MODEL_IDENTITY_V2",
+    "api_mode_role": "transport audit only; chat and responses do not split AnalysisModelKey",
+    "core_fields": ["Provider", "Model", "ModelVersion", "Temperature", "TopP", "Seed", "SamplingSent", "PromptVersion", "ParserVersion"],
+    "normalization": ["trim whitespace", "case-fold identifiers", "canonical numeric values", "canonical boolean SamplingSent"],
+    "missing_value_resolution_order": ["unique value in RunID", "unique value in RawModelConfigID", "unique value in behavioral anchor"],
+    "ambiguity_rule": "two or more known candidates => MODEL_CONFIG_AMBIGUOUS and block formal statistics",
+    "explicit_difference_rule": "known differences in core fields remain separate AnalysisModelKeys"
+  },
+  "bundled_open_source_samples": {
+    "banks": 4,
+    "rows_per_bank": 3,
+    "columns": 19,
+    "encoding": "UTF-8",
+    "composition": "synthetic schema examples only; no formal stimuli or participant data"
+  },
+  "analysis_order": ["single response P", "ItemID repeat summary", "condition equal-weight ItemID summary", "E", "existing D"],
+  "coverage_gate": 0.8,
+  "directional_score_bounds": [-1, 1],
+  "factorial_analysis": {
+    "risk_A1_B1": "dynamic full/partial-cross numeric design; complete sample target 3x21=63 cells; group-by-base slopes and constant-outcome diagnostics",
+    "cni_conflict": "full 2x2x2 exploratory response factorial; 7 outcomes x 7 main/interaction effects",
+    "structural_missing_separated_from_data_missing": true,
+    "formal_unregistered_effects_promoted_to_D": false
+  },
+  "statistical_freeze": {
+    "legacy_E_D_bootstrap": "FROZEN_NOT_RUN",
+    "human_gap_scenario_resampling": "5000 GroupID resamples with fixed seed 20260827; independent new module",
+    "small_g_refactor": "not added; v1.4.1 behavior retained",
+    "D": "existing equal-weight formula, 80% coverage gate, t interval, sign-flip and Holm behavior retained",
+    "E": "existing point estimate and interpretation retained; no bootstrap interval"
+  },
+  "human_reference": {
+    "bundled": false,
+    "same_task": ["ambiguity", "intertemporal", "moral_cni"],
+    "reference_type": "SAME_TASK_HUMAN_SAMPLE",
+    "human_data_version": "HUMAN_REFERENCE_V1",
+    "aggregation": "participant-within-condition equal-weight ItemID, then equal-weight participants",
+    "stimulus_match": ["BankDatasetID", "ItemID", "ConditionCode", "ItemVersion", "Source_ContentDigest"],
+    "cni": "METADATA_BLOCKED; EXPLORATORY; NOT_FORMAL_CNI_PARAMETER"
+  },
+  "risk_human_reference": {
+    "bundled": false,
+    "reference_type": "LITERATURE_DERIVED_REFERENCE",
+    "reference_version": "risk_human_reference_v1",
+    "article": "l’Haridon & Vieider (2019), Quantitative Economics 10(1), 185-215, DOI 10.3982/QE898",
+    "primary_assumption": "NET_OUTCOME_INTEGRATION",
+    "sensitivity_assumption": "SEPARATED_COST",
+    "threshold_name": "P=0 sorting-preference crossover",
+    "primary_curve_scope": "CategoryID comprehensive curve: ItemID-first, then equal-weight across all four application GroupIDs at each x",
+    "base_probability_rule": "A1 and B1 retain three separate curves and three separate crossovers; no pooled/common crossover",
+    "secondary_curve_scope": "individual application GroupID, including the closest monetary analogue",
+    "coverage_rule": "at least 80% planned repeats per ItemID, all planned GroupIDs per comprehensive point, and all planned x points per curve",
+    "ranking_distribution_rule": "six complete rankings retained at every real x point; never pooled across cost levels",
+    "isotonic_role": "SENSITIVITY_ONLY",
+    "extrapolation": false
+  },
+  "standardized_effect_sizes": {
+    "version": "Cohen_d_Hedges_g_v1.1",
+    "category_fields": ["cohenD", "hedgesG"],
+    "paired_model_fields": ["cohenDz", "hedgesGz"],
+    "dScore_preserved_as": "formal D"
+  },
+  "icc": {
+    "version": "ICC_1_K_ONE_WAY_RANDOM_v1",
+    "estimands": ["within-AI condition profile ICC(1,5)", "cross-AI core effect ICC(1,5)"],
+    "descriptive_between_within_variance_ratio_preserved": true,
+    "nominal_rank_excluded": true,
+    "formal_cni_excluded_while_metadata_blocked": true
+  },
+  "cross_file_alignment": {
+    "ranking_to_complete": ["ImportBatchID", "SourceFile", "SourceRow", "ItemID", "RepeatIndex", "PermutationID"],
+    "excluded_identity_fields": ["RunID", "RequestID", "ModelConfigID", "Model", "ModelVersion"]
+  },
+  "memory_management": {
+    "csv_parser": "Blob stream + streaming TextDecoder + projected single-pass parser",
+    "encodings": ["UTF-8", "GB18030"],
+    "jsonl_json_handling": "extension-level short circuit; files are not read",
+    "discarded_in_memory_payloads": ["provider response JSON", "Messages", "response body", "duplicated prompt/context/options"],
+    "full_csv": "chunked Blob parts"
+  },
+  "display_conventions": {
+    "model_order": ["Deepseek-v4-flash", "Doubao-2.0-pro", "Qwen-3.7-flash", "Gemini-3.7-flash", "GPT-5.6-sol", "Grok-4.6"],
+    "unknown_models": "after preferred models, deterministic order",
+    "p_value_notation": "leading zero, for example p < 0.05"
+  },
+  "full_export": {
+    "formats": ["PDF via system print", "self-contained HTML", "UTF-8 CSV"],
+    "dataset_count": 63,
+    "dataset_count_source": "js/export.js DATASET_INFO; validated by automated contract test",
+    "includes": ["v1.5.2 legacy datasets", "Domain QA and profiles", "same-task Human audit and gaps", "risk literature reference", "Cohen d and Hedges g", "independent ICC"],
+    "legacy_E_D_bootstrap_fields": false,
+    "human_gap_scenario_resampling_fields": true,
+    "filter_independence": ["Model", "Bank", "Category", "Domain"]
+  }
+}

@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#f3f6fb">
+  <title>服务器部署向导 · CDPA-LLMs</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="deploy.css">
+</head>
+<body class="deploy-body">
+  <a class="skip-link" href="#deployMain">跳到部署步骤</a>
+  <div class="ambient ambient-a" aria-hidden="true"></div>
+  <div class="ambient ambient-b" aria-hidden="true"></div>
+
+  <header class="deploy-topbar">
+    <a class="auth-brand" href="/" aria-label="返回 CDPA-LLMs">
+      <span class="brand-mark">CD</span>
+      <span><b>CDPA-LLMs</b><small>DEPLOYMENT CENTER</small></span>
+    </a>
+    <div class="deploy-top-actions">
+      <span class="deploy-version">V1.0</span>
+      <a class="btn btn-secondary" href="/">返回平台</a>
+    </div>
+  </header>
+
+  <main class="deploy-main" id="deployMain">
+    <section class="deploy-hero glass-panel">
+      <div>
+        <span class="kicker"><i></i> 云服务器 · Ubuntu · Docker</span>
+        <h1>第一次部署网站，<br><em>照着勾选就能完成</em></h1>
+        <p>从购买云服务器、设置安全组和域名，到自动 HTTPS 与上线验收。页面只在当前浏览器保存勾选进度，不上传你的服务器信息。</p>
+        <div class="deploy-hero-actions">
+          <a class="btn btn-primary btn-large" href="#step-profile">开始部署</a>
+          <a class="btn btn-secondary btn-large" href="https://docs.docker.com/engine/install/ubuntu/" target="_blank" rel="noreferrer">打开 Docker 官方文档</a>
+        </div>
+      </div>
+      <div class="deploy-progress-card" aria-live="polite">
+        <span>你的部署进度</span>
+        <strong id="deployProgressText">0 / 8</strong>
+        <div class="progress-track large"><i id="deployProgressBar"></i></div>
+        <p id="deployProgressNote">先填写域名和公网 IP，后面的命令会自动替换。</p>
+        <button class="text-btn" id="resetDeployProgress" type="button">重置勾选进度</button>
+      </div>
+    </section>
+
+    <div class="deploy-layout">
+      <aside class="deploy-sidebar glass-panel" aria-label="部署目录">
+        <p>部署目录</p>
+        <nav id="deployNav">
+          <a href="#step-profile"><span>00</span>填写部署信息</a>
+          <a href="#step-server"><span>01</span>购买云服务器</a>
+          <a href="#step-firewall"><span>02</span>开放安全组</a>
+          <a href="#step-dns"><span>03</span>解析域名</a>
+          <a href="#step-connect"><span>04</span>连接并上传</a>
+          <a href="#step-docker"><span>05</span>安装 Docker</a>
+          <a href="#step-launch"><span>06</span>配置并启动</a>
+          <a href="#step-verify"><span>07</span>上线验收</a>
+        </nav>
+        <div class="deploy-sidebar-tip"><b>卡住时</b><p>先执行诊断命令，再把输出中不含密码和邀请码的部分交给技术人员。</p><code>./scripts/doctor.sh</code></div>
+      </aside>
+
+      <div class="deploy-steps">
+        <section class="deploy-step" id="step-profile" data-step="0">
+          <div class="deploy-step-heading"><span>00</span><div><p>先准备好</p><h2>填写你的部署信息</h2></div></div>
+          <p class="deploy-lead">这些信息只用于在本页生成可复制命令，不会发送到服务器或第三方。</p>
+          <div class="deploy-form-grid">
+            <label><span>要访问的域名</span><input id="deployDomain" type="text" value="assessment.example.com" autocomplete="off" spellcheck="false"><small>不要写 https://，建议使用独立子域名。</small></label>
+            <label><span>服务器公网 IPv4</span><input id="deployIp" type="text" value="203.0.113.10" autocomplete="off" spellcheck="false"><small>创建实例后在控制台复制。</small></label>
+            <label><span>HTTPS 提醒邮箱</span><input id="deployEmail" type="email" value="admin@example.com" autocomplete="email"><small>配置脚本会询问，不会显示在网站上。</small></label>
+          </div>
+          <label class="deploy-check"><input type="checkbox" data-deploy-check="profile"><span><b>以上信息已经替换为我自己的内容</b><small>示例 IP 203.0.113.10 不能用于真实部署。</small></span></label>
+        </section>
+
+        <section class="deploy-step" id="step-server" data-step="1">
+          <div class="deploy-step-heading"><span>01</span><div><p>云服务商控制台</p><h2>准备一台 Linux 云服务器</h2></div></div>
+          <div class="deploy-callout"><b>选择可通过 SSH 管理的云服务器，不要选虚拟主机。</b><p>正式使用建议 2 核 4 GB、40 GB SSD、5 Mbps 或更高，并分配公网 IPv4。</p></div>
+          <div class="deploy-specs">
+            <div><span>地域</span><b>香港或靠近用户</b></div>
+            <div><span>系统</span><b>Ubuntu 24.04 LTS 64 位</b></div>
+            <div><span>规格</span><b>2 vCPU / 4 GB RAM</b></div>
+            <div><span>硬盘</span><b>40 GB SSD+</b></div>
+            <div><span>带宽</span><b>5 Mbps+</b></div>
+            <div><span>登录</span><b>SSH 密钥优先</b></div>
+          </div>
+          <div class="deploy-resource-row"><a href="https://ubuntu.com/server/docs" target="_blank" rel="noreferrer">Ubuntu Server 官方文档 ↗</a><span>创建后复制“公网 IPv4”</span></div>
+          <label class="deploy-check"><input type="checkbox" data-deploy-check="server"><span><b>云服务器已创建且状态为运行中</b><small>我已经记下公网 IPv4 和 root 登录方式。</small></span></label>
+        </section>
+
+        <section class="deploy-step" id="step-firewall" data-step="2">
+          <div class="deploy-step-heading"><span>02</span><div><p>外部防火墙</p><h2>只开放需要的安全组端口</h2></div></div>
+          <div class="deploy-table-wrap">
+            <table>
+              <thead><tr><th>协议</th><th>端口</th><th>来源</th><th>作用</th></tr></thead>
+              <tbody>
+                <tr><td>TCP</td><td><b>22</b></td><td>你的公网 IP /32</td><td>SSH 管理</td></tr>
+                <tr><td>TCP</td><td><b>80</b></td><td>0.0.0.0/0</td><td>跳转与证书申请</td></tr>
+                <tr><td>TCP</td><td><b>443</b></td><td>0.0.0.0/0</td><td>HTTPS 网站</td></tr>
+                <tr><td>UDP</td><td><b>443</b></td><td>0.0.0.0/0</td><td>HTTP/3，可选</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="deploy-warning"><b>不要开放 8765，也不需要数据库端口。</b><p>8765 只在 Docker 内部网络使用。部署完成后，把 TCP 22 的来源收紧到你的管理 IP。</p></div>
+          <div class="deploy-resource-row"><span>请按云服务商文档配置实例防火墙或安全组</span><span>出站需允许访问互联网</span></div>
+          <label class="deploy-check"><input type="checkbox" data-deploy-check="firewall"><span><b>安全组已绑定实例并保存</b><small>TCP 22、80、443 已按上表设置。</small></span></label>
+        </section>
+
+        <section class="deploy-step" id="step-dns" data-step="3">
+          <div class="deploy-step-heading"><span>03</span><div><p>域名控制台</p><h2>添加一条 A 记录</h2></div></div>
+          <div class="dns-card">
+            <div><span>记录类型</span><strong>A</strong></div>
+            <div><span>主机记录</span><strong id="dnsHost">assessment</strong></div>
+            <div><span>记录值</span><strong id="dnsValue">203.0.113.10</strong></div>
+            <div><span>TTL</span><strong>600 或默认</strong></div>
+          </div>
+          <p class="deploy-note">根域名通常填写 <b>@</b>；子域名填写最左侧主机记录。除非服务器确实有公网 IPv6，否则不要添加 AAAA 记录。</p>
+          <div class="command-card">
+            <div><span>在 Windows PowerShell 检查解析</span><button type="button" data-copy-target="dnsCommand">复制</button></div>
+            <pre id="dnsCommand" data-command-template="nslookup {{DOMAIN}}">nslookup assessment.example.com</pre>
+          </div>
+          <div class="deploy-resource-row"><span>在你的域名服务商控制台添加 A 记录</span><span>解析可能需要 0—24 小时传播</span></div>
+          <label class="deploy-check"><input type="checkbox" data-deploy-check="dns"><span><b>查询结果已经返回我的服务器公网 IP</b><small>域名解析未一致前，HTTPS 证书通常无法签发。</small></span></label>
+        </section>
+
+        <section class="deploy-step" id="step-connect" data-step="4">
+          <div class="deploy-step-heading"><span>04</span><div><p>SSH / 终端</p><h2>连接服务器并获取源码</h2></div></div>
+          <ol class="deploy-mini-steps">
+            <li><b>新建 SSH 连接</b><span>主机填公网 IP，端口 22，用户名通常为 root。</span></li>
+            <li><b>克隆公开仓库</b><span>把源码放到服务器的 /opt/cdpa 目录。</span></li>
+            <li><b>运行诊断</b><span>逐行执行下面的命令。</span></li>
+          </ol>
+          <div class="command-card">
+            <div><span>连接服务器</span><button type="button" data-copy-target="sshCommand">复制</button></div>
+            <pre id="sshCommand" data-command-template="ssh root@{{IP}}">ssh root@203.0.113.10</pre>
+          </div>
+          <div class="command-card">
+            <div><span>克隆并检查源码</span><button type="button" data-copy-target="extractCommand">复制</button></div>
+            <pre id="extractCommand">git clone https://github.com/wsLuYao/CDPA-LLMs.git /opt/cdpa
+  cd /opt/cdpa
+  chmod +x scripts/*.sh
+  ./scripts/doctor.sh</pre>
+          </div>
+          <div class="deploy-resource-row"><a href="https://ubuntu.com/server/docs/openssh-server" target="_blank" rel="noreferrer">Ubuntu OpenSSH 文档 ↗</a><span>命令没有回显密码属于正常现象</span></div>
+          <label class="deploy-check"><input type="checkbox" data-deploy-check="connect"><span><b>终端当前位置显示为 /opt/cdpa</b><small>执行 ls 可以看到 Dockerfile、compose.yaml 和 scripts。</small></span></label>
+        </section>
+
+        <section class="deploy-step" id="step-docker" data-step="5">
+          <div class="deploy-step-heading"><span>05</span><div><p>自动安装</p><h2>安装 Docker Engine</h2></div></div>
+          <p class="deploy-lead">部署包使用 Docker 官方软件源安装 Engine、Buildx 和 Compose 插件；如果服务器已有重要容器，请先备份并让管理员确认。</p>
+          <div class="command-card">
+            <div><span>在 /opt/cdpa 中执行</span><button type="button" data-copy-target="dockerCommand">复制</button></div>
+            <pre id="dockerCommand">sudo ./scripts/install-docker-ubuntu.sh</pre>
+          </div>
+          <div class="command-card">
+            <div><span>确认安装结果</span><button type="button" data-copy-target="dockerVerifyCommand">复制</button></div>
+            <pre id="dockerVerifyCommand">docker --version
+docker compose version</pre>
+          </div>
+          <label class="deploy-check"><input type="checkbox" data-deploy-check="docker"><span><b>两个版本命令都能正常返回</b><small>若提示权限不足，先使用 root 账号完成部署。</small></span></label>
+        </section>
+
+        <section class="deploy-step" id="step-launch" data-step="6">
+          <div class="deploy-step-heading"><span>06</span><div><p>一键配置</p><h2>填写域名并启动网站</h2></div></div>
+          <div class="deploy-callout"><b>脚本会自动生成 48 位注册邀请码。</b><p>立即保存到密码管理器。邀请码和 .env 不要发群聊、不要放进截图。</p></div>
+          <div class="command-card">
+            <div><span>开始配置与部署</span><button type="button" data-copy-target="launchCommand">复制</button></div>
+            <pre id="launchCommand">cd /opt/cdpa
+./scripts/setup.sh</pre>
+          </div>
+          <div class="answer-preview">
+            <span>脚本询问时填写</span>
+            <dl>
+              <div><dt>域名</dt><dd id="answerDomain">assessment.example.com</dd></div>
+              <div><dt>邮箱</dt><dd id="answerEmail">admin@example.com</dd></div>
+              <div><dt>现在启动</dt><dd>直接按 Enter</dd></div>
+            </dl>
+          </div>
+          <p class="deploy-note">首次构建通常需要几分钟。平台会自动启动 Caddy，并在域名解析与 80/443 端口正确时申请 HTTPS 证书。</p>
+          <label class="deploy-check"><input type="checkbox" data-deploy-check="launch"><span><b>终端已经显示“平台已就绪”</b><small>我已经把注册邀请码保存在安全位置。</small></span></label>
+        </section>
+
+        <section class="deploy-step" id="step-verify" data-step="7">
+          <div class="deploy-step-heading"><span>07</span><div><p>最后检查</p><h2>验收 HTTPS、账号和演示报告</h2></div></div>
+          <div class="command-card">
+            <div><span>服务器诊断</span><button type="button" data-copy-target="verifyCommand">复制</button></div>
+            <pre id="verifyCommand" data-command-template="cd /opt/cdpa
+./scripts/status.sh
+./scripts/doctor.sh
+curl -fsS https://{{DOMAIN}}/api/health">cd /opt/cdpa
+./scripts/status.sh
+./scripts/doctor.sh
+curl -fsS https://assessment.example.com/api/health</pre>
+          </div>
+          <div class="acceptance-grid">
+            <label><input type="checkbox" data-acceptance><span>浏览器地址栏有 HTTPS 锁标志</span></label>
+            <label><input type="checkbox" data-acceptance><span>使用邀请码创建账号成功</span></label>
+            <label><input type="checkbox" data-acceptance><span>演示体验可以完成并生成报告</span></label>
+            <label><input type="checkbox" data-acceptance><span>关闭浏览器后可以重新登录</span></label>
+          </div>
+          <a class="deploy-open-site btn btn-primary btn-large" id="openDeployedSite" href="https://assessment.example.com" target="_blank" rel="noreferrer">打开我的网站 ↗</a>
+          <label class="deploy-check"><input type="checkbox" data-deploy-check="verify"><span><b>四项验收均已通过</b><small>先用小规模真实 API 测试费用和限流，再进行正式全量测评。</small></span></label>
+        </section>
+
+        <section class="deploy-ops glass-panel">
+          <div><span>上线以后</span><h2>只需要记住 4 条管理命令</h2></div>
+          <div class="ops-grid">
+            <code>./scripts/status.sh<small>状态与日志</small></code>
+            <code>./scripts/doctor.sh<small>一键诊断</small></code>
+            <code>./scripts/backup.sh<small>备份数据</small></code>
+            <code>./scripts/deploy.sh<small>更新后重部署</small></code>
+          </div>
+          <p>所有命令都先执行 <b>cd /opt/cdpa</b>。更新前先备份数据；安全与部署边界请阅读仓库中的 SECURITY.md 和 docs。</p>
+        </section>
+      </div>
+    </div>
+  </main>
+  <div class="deploy-toast" id="deployToast" role="status" aria-live="polite"></div>
+  <script src="deploy.js"></script>
+</body>
+</html>

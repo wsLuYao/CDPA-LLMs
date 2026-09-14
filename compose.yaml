@@ -1,0 +1,82 @@
+name: cdpa-llms
+
+services:
+  init-data:
+    image: cdpa-llms-platform:V1.0
+    user: "0:0"
+    command: ["sh", "-c", "chown -R 10001:10001 /data"]
+    volumes:
+      - cdpa_data:/data
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: cdpa-llms-platform:V1.0
+    restart: unless-stopped
+    depends_on:
+      init-data:
+        condition: service_completed_successfully
+    environment:
+      CDPA_ONLINE: "1"
+      CDPA_PORT: "8765"
+      CDPA_DATA_DIR: "/data"
+      CDPA_REGISTRATION_CODE: "${CDPA_REGISTRATION_CODE}"
+      CDPA_TRUSTED_ORIGINS: "https://${DOMAIN}"
+      CDPA_COOKIE_SECURE: "1"
+      CDPA_MAX_ACTIVE_PROJECTS: "${CDPA_MAX_ACTIVE_PROJECTS:-2}"
+      CDPA_MAX_ACTIVE_PER_USER: "${CDPA_MAX_ACTIVE_PER_USER:-2}"
+      TZ: "${TZ:-Asia/Shanghai}"
+    expose:
+      - "8765"
+    volumes:
+      - cdpa_data:/data
+    read_only: true
+    tmpfs:
+      - /tmp:size=256m,mode=1777
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    pids_limit: 512
+    healthcheck:
+      test: ["CMD", "python", "-c", "import json,urllib.request; data=json.load(urllib.request.urlopen('http://127.0.0.1:8765/api/health',timeout=3)); raise SystemExit(0 if data.get('ok') else 1)"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on:
+      app:
+        condition: service_healthy
+    environment:
+      DOMAIN: "${DOMAIN}"
+      ACME_EMAIL: "${ACME_EMAIL}"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  cdpa_data:
+    name: cdpa_data
+  caddy_data:
+    name: cdpa_caddy_data
+  caddy_config:
+    name: cdpa_caddy_config

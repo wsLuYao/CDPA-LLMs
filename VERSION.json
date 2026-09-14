@@ -1,0 +1,21 @@
+{
+  "product_name": "CDPA-LLMs AI决策偏好测评平台",
+  "platform": "V1.0",
+  "registration_version": "V1.0",
+  "release_state": "open-source-reference-implementation",
+  "freeze_date": "2026-09-02",
+  "prompt": "P1.0",
+  "parser": "parser_v1.1",
+  "public_report": "PUBLIC_REPORT_V2",
+  "analysis_core": "v1.7",
+  "included_sample_conditions": 12,
+  "full_research_bank_conditions": 936,
+  "full_research_banks_included": false,
+  "deployment": "single-vm-docker-caddy",
+  "interface": "consumer-light-glass-v2",
+  "onboarding": "guided-spotlight-tour-v1",
+  "deployment_wizard": "single-vm-docker-guided-checklist-v1",
+  "descriptive_report_modules": ["model_quality", "scorecard", "profile_heatmap", "category_divergence", "context_effects", "repeat_stability", "option_distribution", "model_similarity", "same_task_human_gap"],
+  "model_display_order": ["Deepseek-v4-flash", "Doubao-2.0-pro", "Qwen-3.7-flash", "Gemini-3.7-flash", "GPT-5.6-sol", "Grok-4.6"],
+  "p_value_notation": "leading-zero"
+}

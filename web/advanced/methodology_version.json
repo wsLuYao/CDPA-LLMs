@@ -1,0 +1,71 @@
+{
+  "analysisCoreVersion": "1.7.0",
+  "legacyAnalysisVersion": "1.5.2",
+  "domainAnalysisVersion": "DOMAIN_ANALYSIS_V1",
+  "humanReferenceVersion": "HUMAN_REFERENCE_V1",
+  "riskReferenceVersion": "risk_human_reference_v1",
+  "cniHumanReferenceVersion": "CNI_HUMAN_REFERENCE_V1",
+  "effectSizeVersion": "Cohen_d_Hedges_g_v1.1",
+  "iccVersion": "ICC_1_K_ONE_WAY_RANDOM_v1",
+  "modelIdentityPolicy": "MODEL_IDENTITY_V2",
+  "plannedRepeats": 5,
+  "coverageGate": 0.8,
+  "legacyStatistics": {
+    "pPipeline": "single response P -> ItemID repeat mean -> equal-weight ItemID condition mean -> E -> D",
+    "eFormula": "sum(w_j * Pbar_j) / 2",
+    "dFormula": "unchanged v1.5.2 equal-weight GroupID aggregation",
+    "dInference": "unchanged t interval, sign-flip and Holm",
+    "legacyEDBootstrap": "FROZEN_NOT_RUN",
+    "smallGRefactor": "FROZEN_NOT_RUN"
+  },
+  "domain": {
+    "sourcePriority": "Source_Domain -> Domain -> bankRow.Domain",
+    "domainKey": "BankDatasetID::Source_Domain",
+    "semanticMerge": "DISABLED",
+    "mixedGroupStatus": "MIXED_DOMAIN_GROUP",
+    "bankContentHash": "UNCHANGED",
+    "separateMetadataHash": "DomainMetadataHash"
+  },
+  "humanGap": {
+    "referenceType": "SAME_TASK_HUMAN_SAMPLE",
+    "bootstrapSeed": 20260827,
+    "bootstrapIterations": 5000,
+    "bootstrapUnit": "GroupID",
+    "intervalName": "ScenarioResamplingInterval95",
+    "aggregation": "participant-within-cell equal-weight ItemID, then equal-weight participants",
+    "aiResultSource": "reuse effects.conditionMeans and effects.groupEffects"
+  },
+  "stimulusDigest": {
+    "field": "Source_ContentDigest",
+    "algorithm": "FNV-1a-32 over JavaScript UTF-16 code units",
+    "prefix": "BCD-",
+    "input": "Source_Context=trim(value)|Source_Question=trim(value)|Source_Opt1=trim(value)|Source_Opt2=trim(value)|Source_Opt3=trim(value)",
+    "newSha256FingerprintIntroduced": false
+  },
+  "risk": {
+    "referenceType": "LITERATURE_DERIVED_REFERENCE",
+    "riskPrimaryAssumption": "NET_OUTCOME_INTEGRATION",
+    "riskSensitivityAssumption": "SEPARATED_COST",
+    "thresholdName": "P=0 sorting-preference crossover",
+    "primaryCurve": "ItemID-first P -> same-x GroupID mean -> four application GroupIDs equal-weight",
+    "baseProbabilityRule": "A1/B1 base probabilities are separate curves and separate crossovers; pooled/common crossover prohibited",
+    "secondaryCurve": "single application GroupID; monetary GroupID is the closest article analogue",
+    "coverageRule": "ItemID valid repeats >=4/5; comprehensive point covers 4/4 GroupIDs; curve covers all planned x points",
+    "rankingDistributionRule": "six full rankings by real x point",
+    "isotonicRole": "SENSITIVITY_ONLY",
+    "noExtrapolation": true,
+    "sourceArticle": "l’Haridon, O., & Vieider, F. M. (2019). All over the map: A worldwide comparison of risk preferences. Quantitative Economics, 10(1), 185-215. https://doi.org/10.3982/QE898"
+  },
+  "cni": {
+    "formalHumanParameter": "METADATA_BLOCKED",
+    "allowedAnalysis": "EXPLORATORY_METHOD_SPECIFIED",
+    "parameterStatus": "NOT_FORMAL_CNI_PARAMETER",
+    "l3TopPreserved": true
+  },
+  "fullExportDatasetCount": 63,
+  "humanDataVersion": {
+    "ambiguity": "NOT_BUNDLED_IN_OPEN_SOURCE_RELEASE",
+    "intertemporal": "NOT_BUNDLED_IN_OPEN_SOURCE_RELEASE",
+    "moral_cni": "NOT_BUNDLED_IN_OPEN_SOURCE_RELEASE"
+  }
+}

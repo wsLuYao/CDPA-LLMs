@@ -1,0 +1,24 @@
+[project]
+name = "cdpa-llms"
+version = "1.0.0"
+description = "A transparent, self-hosted pipeline for evaluating decision-preference patterns in language-model outputs."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { file = "LICENSE" }
+authors = [{ name = "CDPA-LLMs contributors" }]
+keywords = ["llm", "evaluation", "decision-making", "self-hosted"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+]
+
+[project.urls]
+Homepage = "https://github.com/wsLuYao/CDPA-LLMs"
+Issues = "https://github.com/wsLuYao/CDPA-LLMs/issues"
+
+[tool.ruff]
+target-version = "py311"
+line-length = 120

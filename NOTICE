@@ -1,0 +1,14 @@
+CDPA-LLMs — Open-source reference implementation
+
+This repository contains the technical implementation of the CDPA-LLMs
+decision-preference assessment platform. Application materials, slide decks,
+formal research question banks, participant-derived reference data, private
+deployment records, credentials, and generated assessment results are not part
+of this distribution.
+
+The included CSV files are synthetic examples created solely to demonstrate
+the data contract and execution pipeline. They are not validated instruments
+and must not be represented as the original research banks.
+
+Model and provider names are compatibility examples and do not imply
+affiliation, endorsement, or continuing API availability.

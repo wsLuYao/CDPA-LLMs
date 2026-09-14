@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#f4f7fb">
+  <meta name="description" content="CDPA-LLMs AI决策偏好测评平台的专业统计与审计附录">
+  <title>专业统计附录 · CDPA-LLMs</title>
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="分析模块导航">
+      <a class="brand" id="brandHome" href="#import" aria-label="返回数据导入">
+        <span class="brand-mark" aria-hidden="true"><b>DP</b><i></i></span>
+        <span class="brand-copy"><strong>专业统计附录</strong><small>CDPA-LLMs · ADVANCED</small></span>
+      </a>
+
+      <nav class="nav-list">
+        <button class="nav-item is-active" data-target="import" type="button"><span class="nav-index">01</span><span class="nav-copy"><b>数据导入</b><small>运行文件与题库元数据</small></span></button>
+        <button class="nav-item" data-target="overview" type="button"><span class="nav-index">02</span><span class="nav-copy"><b>分析总览</b><small>样本、质量与参数就绪度</small></span></button>
+        <button class="nav-item" data-target="preference" type="button"><span class="nav-index">03</span><span class="nav-copy"><b>偏好统计</b><small>P、E、D 与多维画像</small></span></button>
+        <button class="nav-item" data-target="quality" type="button"><span class="nav-index">04</span><span class="nav-copy"><b>测量质量</b><small>有效性、稳健性与题目决策</small></span></button>
+        <button class="nav-item" data-target="audit" type="button"><span class="nav-index">05</span><span class="nav-copy"><b>审计与公式</b><small>计算口径与数据链路</small></span></button>
+        <button class="nav-item" data-target="human-reference" type="button"><span class="nav-index">06</span><span class="nav-copy"><b>情境与人类参照</b><small>Domain、Human与外部效度</small></span></button>
+        <button class="nav-item" data-target="export" type="button"><span class="nav-index">07</span><span class="nav-copy"><b>导出报告</b><small>全量 PDF、HTML 与 CSV</small></span></button>
+      </nav>
+
+      <footer class="sidebar-foot">
+        <div class="privacy-note"><i></i><span>数据仅在当前项目内分析</span></div>
+        <p class="version-line">软件 V1.0 · 专业统计附录</p>
+        <p class="copyright">Copyright © 华中师范大学心理学院<br>“厚粲杯”四个碳基测硅基小组</p>
+      </footer>
+    </aside>
+
+    <main class="workspace">
+      <header class="topbar">
+        <button class="mobile-nav" id="mobileNav" type="button" aria-label="打开导航">☰</button>
+        <div class="page-context">
+          <span class="workspace-label">工作区</span>
+          <div class="page-title-row"><h1 id="sectionTitle">数据导入</h1><button class="info-tip" id="sectionInfo" type="button" aria-label="工作区说明" data-tip="导入测验程序生成的结果文件与题库元数据。">i</button></div>
+          <p id="sectionEyebrow">运行文件与题库元数据</p>
+        </div>
+        <div class="top-actions"><a class="btn btn-quiet" id="backToPublic" href="/#report">返回通俗报告</a><span class="run-chip" id="runChip"><i></i>尚未载入数据</span><button class="btn btn-quiet" id="exportMenuBtn" type="button" disabled>导出结果</button></div>
+      </header>
+
+      <div class="global-filter is-hidden" id="globalFilter" aria-label="分析筛选器">
+        <label><span>分析模型 <span class="info-tip static" tabindex="0" data-tip="MODEL_IDENTITY_V2先在同一RunID、Raw ModelConfigID和唯一行为锚点内解析缺失元数据：只有唯一已知值时才补全；多个已知值时标记歧义并阻断。chat/responses仅作传输审计，明确不同的模型、采样参数、PromptVersion或ParserVersion仍严格分开。">i</span></span><select id="modelFilter"><option value="ALL">全部配置</option></select></label>
+        <label><span>子测验 <span class="info-tip static" tabindex="0" data-tip="不同题库分别作为独立子测验，不合成未经验证的总分。">i</span></span><select id="bankFilter"><option value="ALL">全部子测验</option></select></label>
+        <label><span>三级分类 <span class="info-tip static" tabindex="0" data-tip="按题库中的 CategoryID/Category 筛选。">i</span></span><select id="categoryFilter"><option value="ALL">全部分类</option></select></label>
+        <label class="switch-label"><input id="includeRepaired" type="checkbox" checked><span class="switch"></span><span>纳入修复成功回答 <span class="info-tip static" tabindex="0" data-tip="关闭后执行敏感性分析：REPAIRED_VALID 不进入 P、E、D 和稳健性统计。">i</span></span></label>
+        <button class="btn btn-quiet btn-small" id="resetFilters" type="button">重置筛选</button>
+      </div>
+
+      <div class="domain-filter is-hidden" id="domainFilter" aria-label="情境领域筛选器">
+        <div class="domain-filter-title"><b>情境领域（Domain）</b><span class="info-tip static" tabindex="0" data-tip="Domain按BankDatasetID隔离，保留Source_Domain原始标签；不做模糊、关键词或跨题库语义合并。">i</span></div>
+        <label><span>搜索</span><input id="domainSearch" type="search" placeholder="搜索当前子测验Domain"></label>
+        <label class="domain-multi-label"><span>多选Domain</span><select id="domainMulti" multiple size="4" aria-label="多选情境领域"></select></label>
+        <label><span>操作模式</span><select id="domainCompareMode"><option value="VIEW_SELECTED">查看所选情境</option><option value="COMPARE_SELECTED">横向比较所选情境</option></select></label>
+        <div class="domain-filter-actions"><button class="btn btn-quiet btn-small" id="selectAllDomains" type="button">全选</button><button class="btn btn-quiet btn-small" id="clearDomains" type="button">清除</button><button class="btn btn-secondary btn-small" id="restoreDomains" type="button">恢复全部</button></div>
+        <p id="domainScopeNote">请选择一个子测验后进行正式Domain横向比较；Bank=ALL时只显示覆盖概览。</p>
+      </div>
+
+      <section class="view is-active" id="import" data-title="数据导入" data-eyebrow="多批次两CSV分析与题库元数据" data-description="每个结果批次只需导入排序结果.csv与完整运行记录.csv；可新增多个模型或运行批次后合并分析。">
+        <article class="card import-console">
+          <div class="card-head"><div class="card-title"><h2>结果批次</h2><button class="info-tip" type="button" data-tip="一个批次对应一个模型或运行集合，只需两份CSV。平台以完整运行记录为主要计分源，以排序结果进行独立交叉核验；JSONL/JSON不会读取，也不影响核心分析。">i</button></div><span class="local-badge">项目内解析</span></div>
+          <div class="batch-list" id="batchList" aria-live="polite"></div>
+          <button class="add-batch-button" id="addBatchBtn" type="button"><span aria-hidden="true">＋</span>新增结果批次</button>
+          <div class="bank-meta-strip">
+            <div><b>题库元数据</b><button class="info-tip static" type="button" data-tip="公开版默认载入合成格式样例；正式分析请导入你有权使用且完成验证的题库元数据。">i</button><small>所有批次共用同一套评分元数据</small></div>
+            <strong id="bankStatus">正在载入内置题库…</strong>
+          </div>
+          <div class="upload-footer"><p class="upload-status" id="uploadStatus" role="status">请为当前批次导入排序结果.csv与完整运行记录.csv。</p><div class="upload-actions"><button class="btn btn-secondary is-hidden" id="loadSample" type="button">载入随附示例</button><button class="btn btn-primary" id="analyzeBtn" type="button" disabled>开始合并分析</button></div></div>
+        </article>
+      </section>
+
+      <section class="view" id="overview" data-title="分析总览" data-eyebrow="样本、数据质量与参数就绪度" data-description="汇总当前筛选范围内的样本量、有效率、P/E/D 可计算数量与分析模块就绪状态。">
+        <div class="metric-grid" id="overviewMetrics"></div>
+        <div class="parameter-strip" id="parameterCounts"></div>
+        <div class="two-col overview-grid">
+          <article class="card"><div class="card-head"><div class="card-title"><h2>三级分类总体偏好位置（平均P）</h2><button class="info-tip" type="button" data-tip="每根条形仅表示当前数据中该分类的总体偏好位置，不表示条件改变造成的E效应。未运行分类在下方完整覆盖表中保留。">i</button></div><span class="formula-chip">偏好位置 ≠ 条件效应</span></div><div id="overviewBars" class="chart large-chart empty-chart">载入数据后生成图表</div><p class="chart-note">平均P回答“总体偏向哪里”；E回答“条件改变后移动多少”。</p></article>
+          <article class="card"><div class="card-head"><div class="card-title"><h2>分析就绪度</h2><button class="info-tip" type="button" data-tip="检查逻辑映射、条件覆盖、重复次数、模型配置数量和跨文件链路。">i</button></div></div><div id="readinessList" class="readiness-list"></div></article>
+        </div>
+        <article class="card"><div class="card-head"><div class="card-title"><h2>运行摘要</h2><button class="info-tip" type="button" data-tip="自动列出当前数据可计算与不可计算的项目，不替代研究者解释。">i</button></div></div><div class="narrative" id="overviewNarrative"></div></article>
+        <article class="card"><div class="card-head"><div class="card-title"><h2>完整分类、条件与指标覆盖</h2><button class="info-tip" type="button" data-tip="从已导入题库与完整运行记录Source_*元数据的动态并集列出计分单元；新增条件、未运行、不适用与不可计算均不会被旧目录隐藏。">i</button></div><button class="btn btn-quiet btn-small" id="exportCoverageCsv">导出覆盖表</button></div><div class="registry-summary" id="registrySummary"></div><div class="table-wrap"><table class="wide-table"><thead><tr><th>模型</th><th>子测验</th><th>二级维度</th><th>三级分类/计分单元</th><th>评分族</th><th>条件结构</th><th>条件覆盖</th><th>题目覆盖</th><th>P</th><th>E</th><th>D</th><th>运行状态</th><th class="explain-col">口径说明</th></tr></thead><tbody id="coverageTable"></tbody></table></div></article>
+      </section>
+
+      <section class="view" id="preference" data-title="偏好统计" data-eyebrow="P、E、D 与多维画像" data-description="逐层核验单次偏好分 P、题组条件效应 E、分类汇总效应 D，并查看多维画像。">
+        <div class="subtabs" data-tab-group="preference"><button class="subtab is-active" type="button" data-panel="pref-p">P 与平均P</button><button class="subtab" type="button" data-panel="pref-e">E 题组效应</button><button class="subtab" type="button" data-panel="pref-d">平均E与D</button><button class="subtab" type="button" data-panel="pref-factorial">FACTORIAL</button><button class="subtab" type="button" data-panel="pref-nondirectional">非方向评分</button><button class="subtab" type="button" data-panel="pref-profile">多维画像</button><button class="subtab" type="button" data-panel="pref-interpretation">解释口径</button></div>
+
+        <div class="subpanel is-active" id="pref-p" data-panel-group="preference">
+          <div class="formula-banner"><div><b>P<sub>gjr</sub></b><span>单次回答偏好分</span></div><div class="formula-inline">P = [rank(L<sup>−</sup>) − rank(L<sup>+</sup>)] / (K − 1)</div><button class="info-tip" type="button" data-tip="当前三选项题中 L−=L1、L+=L3、K=3。无效回答记为缺失，不记为0。">i</button></div>
+          <article class="card"><div class="card-head"><div class="card-title"><h2>P 计算明细</h2><button class="info-tip" type="button" data-tip="逐条显示来源批次、rank(L1)、rank(L3)、分子、分母和 P，并依据所在三级分类解释正负方向。">i</button></div><button class="btn btn-quiet btn-small" id="exportPCsv">导出 P 明细</button></div><div class="table-wrap"><table class="wide-table"><thead><tr><th>结果批次</th><th>模型配置</th><th>子测验</th><th>GroupID</th><th>ItemID</th><th>条件</th><th>重复</th><th>逻辑排序</th><th><span class="field-label">rank(L1)<span class="info-tip static" tabindex="0" data-tip="L1 在完整排序中的名次，1 表示最优先。">i</span></span></th><th><span class="field-label">rank(L3)<span class="info-tip static" tabindex="0" data-tip="L3 在完整排序中的名次。">i</span></span></th><th>分子</th><th>分母</th><th><span class="field-label">P<span class="info-tip static" tabindex="0" data-tip="正值表示 L3 相对 L1 更优先；具体含义由该分类的OptionRole决定。">i</span></span></th><th>状态</th><th class="explain-col">自动解释</th></tr></thead><tbody id="pScoreTable"></tbody></table></div></article>
+          <article class="card"><div class="card-head"><div class="card-title"><h2>条件内平均偏好 P̄</h2><button class="info-tip" type="button" data-tip="先在每个ItemID内对5次P求P_Mean，再在同一AnalysisModelKey、GroupID和ConditionCode内对ItemID等权汇总，避免原始重复数不同造成隐性加权。">i</button></div><div class="card-head-actions"><span class="formula-chip">P̄<sub>gj</sub> = mean<sub>ItemID</sub>(P_Mean)</span><button class="btn btn-quiet btn-small" id="exportPMeanCsv">导出平均P</button></div></div><div class="table-wrap"><table class="wide-table"><thead><tr><th>分析模型</th><th>子测验</th><th>二级维度</th><th>三级分类</th><th>GroupID</th><th>条件</th><th>ItemID数</th><th>有效重复</th><th>P̄</th><th>重复状态</th><th class="explain-col">平均P解释</th></tr></thead><tbody id="conditionMeanTable"></tbody></table></div></article>
+        </div>
+
+        <div class="subpanel" id="pref-e" data-panel-group="preference">
+          <div class="formula-banner"><div><b>E<sub>gq</sub></b><span>题组条件效应</span></div><div class="formula-inline">E = Σ(w<sub>qj</sub>P̄<sub>gj</sub>) / (P<sub>max</sub> − P<sub>min</sub>)</div><button class="info-tip" type="button" data-tip="P 已归一化到 −1～1，因此分母为2。权重必须满足 Σw=0、正权重和=1、负权重和=−1。">i</button></div>
+          <div class="effect-controls"><label><span>子测验 <span class="info-tip static" tabindex="0" data-tip="选择 E/D 分析使用的题库。">i</span></span><select id="effectBank"></select></label><label><span>三级分类 <span class="info-tip static" tabindex="0" data-tip="可查看全部分类或指定 CategoryID。">i</span></span><select id="effectCategory"></select></label><label><span>模型配置 <span class="info-tip static" tabindex="0" data-tip="E 在每个 ModelConfig 内独立计算。">i</span></span><select id="effectModel"></select></label></div>
+          <div class="notice warning is-hidden" id="effectsNotice"></div>
+          <div class="two-col"><article class="card"><div class="card-head"><div class="card-title"><h2>题组 × 条件 P̄</h2><button class="info-tip" type="button" data-tip="每个单元格先汇总ItemID的5次P，再对同条件ItemID等权。">i</button></div></div><div id="conditionHeatmap" class="chart tall-chart"></div></article><article class="card"><div class="card-head"><div class="card-title"><h2>E 题组效应排序</h2><button class="info-tip" type="button" data-tip="只对必要ItemID均严格具备RepeatIndex 1—5、映射与元数据无冲突且对比权重合法的题组显示E。">i</button></div></div><div id="rankedEffects" class="chart tall-chart"></div></article></div>
+          <article class="card"><div class="card-head"><div class="card-title"><h2>E 计算与方向解释明细</h2><button class="info-tip" type="button" data-tip="逐题组显示条件均值、对比权重、实际代入公式、偏好移动方向和覆盖原因；解释由真实数据动态生成。">i</button></div><button class="btn btn-quiet btn-small" id="exportECsv">导出 E 明细</button></div><div class="table-wrap"><table class="wide-table"><thead><tr><th>模型</th><th>二级维度</th><th>三级分类</th><th>GroupID</th><th>ContrastID</th><th>条件 P̄</th><th>权重 w</th><th>实际代入公式</th><th>E</th><th>状态 / 原因</th><th class="explain-col">条件效应解释</th></tr></thead><tbody id="eEffectsTable"></tbody></table></div></article>
+        </div>
+
+        <div class="subpanel" id="pref-d" data-panel-group="preference">
+          <div class="formula-banner secondary-formula"><div><b>Ē<sub>dq</sub></b><span>有效题组E的描述均值</span></div><div class="formula-inline">Ē = ΣE<sub>gq</sub> / G<sub>valid</sub></div><button class="info-tip" type="button" data-tip="平均E只描述当前有效题组；即使覆盖不足80%也可显示，但不能冒充正式分类汇总D。当前题组等权时，满足门槛后的D与平均E数值相同。">i</button></div>
+          <div class="formula-banner"><div><b>D<sub>dq</sub></b><span>分类汇总效应</span></div><div class="formula-inline">D = Σ(a<sub>g</sub>E<sub>gq</sub>) / Σa<sub>g</sub></div><button class="info-tip" type="button" data-tip="当前题库 AggregationRule 指定题组等权，因此 a_g=1；只在相同 CategoryID 与 ContrastID 内汇总。覆盖低于80%时不输出 D。">i</button></div>
+          <article class="card"><div class="card-head"><div class="card-title"><h2>D 分类汇总与题组 E 分布</h2><button class="info-tip" type="button" data-tip="柱形为 D，误差线为题组 E 的95%置信区间，散点为各 GroupID 的 E。">i</button></div><span class="formula-chip">点 = E · 柱 = D · 误差线 = 95% CI</span></div><div id="effectBarChart" class="chart xl-chart"></div><p class="chart-note" id="effectNote"></p></article>
+          <article class="card"><div class="card-head"><div class="card-title"><h2>平均E、D与稳定复现证据</h2><button class="info-tip" type="button" data-tip="D的解释同时结合覆盖率、题组方向分布、95%CI和Holm校正检验；达到覆盖门槛不自动等于稳定效应获得支持。">i</button></div><button class="btn btn-quiet btn-small" id="exportEffectsCsv">导出平均E / D 明细</button></div><div class="table-wrap"><table class="wide-table"><thead><tr><th>模型</th><th>二级维度</th><th>三级分类</th><th>ContrastID</th><th>平均E公式</th><th>平均E</th><th>95% CI</th><th>D公式</th><th>D</th><th>覆盖</th><th>正/负/零题组</th><th>置换 p</th><th>Holm p</th><th>证据等级</th><th class="explain-col">平均E与D解释</th></tr></thead><tbody id="effectsTable"></tbody></table></div></article>
+        </div>
+
+        <div class="subpanel" id="pref-factorial" data-panel-group="preference">
+          <div class="formula-banner"><div><b>FACTORIAL</b><span>设计矩阵效应</span></div><div class="formula-inline">E<sub>q</sub> = Σ(w<sub>qj</sub>Ȳ<sub>j</sub>) / (Y<sub>max</sub>−Y<sub>min</sub>)</div><button class="info-tip" type="button" data-tip="Y可为方向P、逻辑选项首选指示、两两偏好或标准化排名。完整交叉设计计算主效应与交互；数值因子设计同时报告参考点、实际响应曲线与简单斜率。">i</button></div>
+          <div class="effect-controls factorial-controls"><label><span>析因分类 <span class="info-tip static" tabindex="0" data-tip="风险A1/B1为基础概率×成本率的数值因子设计，可由运行记录中的Source_*元数据动态识别完整或部分交叉；CNI为规范×后果×冲突方式的完整2×2×2设计。">i</span></span><select id="factorialCategory"></select></label><label><span>模型配置 <span class="info-tip static" tabindex="0" data-tip="所有因子单元、简单效应与交互均在同一ModelConfig内计算。">i</span></span><select id="factorialModel"></select></label><label><span>结果变量 <span class="info-tip static" tabindex="0" data-tip="方向题使用P；CUSTOM题可切换L1/L2/L3首选率、L1优于L2概率以及三个逻辑选项的标准化排名。">i</span></span><select id="factorialOutcome"></select></label><label><span>效应类型 <span class="info-tip static" tabindex="0" data-tip="筛选预登记效应、主效应、简单斜率、二阶或三阶交互。">i</span></span><select id="factorialEffectType"><option value="ALL">全部效应</option><option value="REGISTERED">预登记效应</option><option value="MAIN_EFFECT">主效应</option><option value="SIMPLE_SLOPE">简单斜率</option><option value="TWO_WAY_INTERACTION">二阶交互</option><option value="THREE_WAY_INTERACTION">三阶交互</option><option value="SLOPE_INTERACTION">斜率交互</option></select></label></div>
+          <div class="notice warning" id="factorialNotice"></div>
+          <div class="factorial-evidence" id="factorialDesignSummary"></div>
+          <div class="two-col"><article class="card"><div class="card-head"><div class="card-title"><h2 id="factorialChartOneTitle">因子单元画像</h2><button class="info-tip" type="button" data-tip="只绘制题库实际登记的因子单元；结构上未设计的组合与本应存在但缺少数据的单元分开标记。">i</button></div></div><div id="factorialHeatmap" class="chart xl-chart"></div></article><article class="card"><div class="card-head"><div class="card-title"><h2 id="factorialChartTwoTitle">主效应与交互</h2><button class="info-tip" type="button" data-tip="风险题显示按实际成本值绘制的三条响应曲线；CNI显示当前结果变量的七个设计矩阵效应。">i</button></div></div><div id="factorialLineChart" class="chart xl-chart"></div></article></div>
+          <article class="card"><div class="card-head"><div class="card-title"><h2>因子单元描述统计</h2><button class="info-tip" type="button" data-tip="逐单元报告计划与有效重复、覆盖、P、首选率、L1优于L2概率及平均排名。">i</button></div></div><div class="table-wrap"><table class="wide-table"><thead><tr><th>条件</th><th>因子水平</th><th>有效/计划</th><th>覆盖</th><th>平均P</th><th>L1首选</th><th>L2首选</th><th>L3首选</th><th>L1&gt;L2</th><th>平均排名 L1/L2/L3</th><th>状态</th></tr></thead><tbody id="factorialCellTable"></tbody></table></div></article>
+          <article class="card"><div class="card-head"><div class="card-title"><h2>预登记效应、设计矩阵效应与题组复现</h2><button class="info-tip" type="button" data-tip="每行对应一个结果变量×一个效应。D只在同一效应已登记且覆盖达到80%后输出；模型化或探索性结果只报告平均估计、区间和题组方向。">i</button></div><button class="btn btn-quiet btn-small" id="exportFactorialCsv">导出析因结果</button></div><div class="factorial-evidence" id="factorialEvidence"></div><div class="table-wrap"><table class="wide-table"><thead><tr><th>来源</th><th>结果变量</th><th>效应/对比</th><th>平均估计/E</th><th>单位</th><th>95% CI</th><th>有效题组</th><th>正/负/零</th><th>描述汇总</th><th>正式D</th><th>p/Holm p</th><th>状态</th><th class="explain-col">解释</th></tr></thead><tbody id="factorialTable"></tbody></table></div></article>
+        </div>
+
+        <div class="subpanel" id="pref-nondirectional" data-panel-group="preference">
+          <div class="formula-banner secondary-formula"><div><b>π(L)</b><span>名义策略首选概率</span></div><div class="formula-inline">π(L<sub>k</sub>) = count(TopChoice=L<sub>k</sub>) / n<sub>valid</sub></div><button class="info-tip" type="button" data-tip="NOMINAL_RANK与CUSTOM不设连续高低端，因此报告首选概率、平均排名和完整排序分布，不生成伪P、伪E或伪D。">i</button></div>
+          <div class="notice info">跨期A3E、B5使用名义排序；CNI-Conflict使用CUSTOM析因评分。没有数值P/E/D是正确的计分路由，不是结果缺失。</div>
+          <article class="card"><div class="card-head"><div class="card-title"><h2>NOMINAL / CUSTOM条件结果</h2><button class="info-tip" type="button" data-tip="完整保留未运行条件；CNI在条件标签冲突关闭前只做8单元描述统计。">i</button></div><button class="btn btn-quiet btn-small" id="exportNominalCsv">导出非方向结果</button></div><div class="table-wrap"><table class="wide-table"><thead><tr><th>模型</th><th>子测验</th><th>分类/计分单元</th><th>评分族</th><th>条件</th><th>有效n</th><th>L1首选率</th><th>L2首选率</th><th>L3首选率</th><th>L1/L2/L3平均排名</th><th>状态与解释</th></tr></thead><tbody id="nonDirectionalTable"></tbody></table></div></article>
+        </div>
+
+        <div class="subpanel" id="pref-profile" data-panel-group="preference">
+          <div class="profile-controls"><label><span>画像子测验 <span class="info-tip static" tabindex="0" data-tip="雷达图只比较同一子测验内的三级分类。">i</span></span><select id="profileBank"></select></label><label><span>画像指标 <span class="info-tip static" tabindex="0" data-tip="可切换平均 P、有效题组覆盖率或首选稳定性。">i</span></span><select id="profileMetric"><option value="preference">条件内方向偏好 P</option><option value="coverage">有效题组覆盖率</option><option value="stability">首选稳定性</option></select></label></div>
+          <article class="card"><div class="card-head"><div class="card-title"><h2>二级维度与三级分类画像</h2><button class="info-tip" type="button" data-tip="每个二级维度下保留三级分类坐标。只有端点语义一致时才给出描述均值；异质端点明确标记为不合成。">i</button></div><span class="formula-chip">画像坐标 ≠ 决策总分</span></div><div id="decisionProfileGrid" class="dimension-profile-grid"></div></article>
+          <article class="card"><div class="card-head"><div class="card-title"><h2 id="radarTitle">三级分类画像</h2><button class="info-tip" type="button" data-tip="方向 P 为绘图转换到0～1；原始值保留在悬停信息和统计表中。">i</button></div></div><div id="radarChart" class="chart xl-chart"></div><p class="chart-note" id="radarNote"></p></article>
+          <article class="card"><div class="card-head"><div class="card-title"><h2>逻辑首选分布</h2><button class="info-tip" type="button" data-tip="显示各三级分类中 L1、L2、L3 成为第一顺位的比例；适用于方向排序与名义排序。">i</button></div></div><div id="topChoiceChart" class="chart top-choice-chart"></div></article>
+          <article class="card"><div class="card-head"><div class="card-title"><h2>模型 × 三级分类 P 矩阵</h2><button class="info-tip" type="button" data-tip="每个单元格为相应 ModelConfig 在该分类的平均 P；缺失值不填色。">i</button></div><span class="formula-chip">负值：L1 端 · 正值：L3 端</span></div><div id="profileHeatmap" class="chart heatmap-chart"></div></article>
+          <article class="card"><div class="card-head"><div class="card-title"><h2>分类平均P描述统计</h2><button class="info-tip" type="button" data-tip="先在GroupID内汇总，再以GroupID等权形成三级分类平均P及置信区间。">i</button></div><button class="btn btn-quiet btn-small" id="exportProfileCsv">导出画像 CSV</button></div><div class="table-wrap"><table class="wide-table"><thead><tr><th>模型配置</th><th>子测验</th><th>二级维度</th><th>三级分类</th><th>分类平均P</th><th>95% CI</th><th>有效题组</th><th>覆盖率</th><th>备注</th><th class="explain-col">画像坐标解释</th></tr></thead><tbody id="profileTable"></tbody></table></div></article>
+        </div>
+
+        <div class="subpanel" id="pref-interpretation" data-panel-group="preference">
+          <div class="metric-ladder" id="metricLadder"></div>
+          <div class="interpret-controls"><label><span>决策 / 子测验 <span class="info-tip static" tabindex="0" data-tip="筛选解释字典，不改变当前分析结果。">i</span></span><select id="interpretBank"></select></label><label><span>二级维度 <span class="info-tip static" tabindex="0" data-tip="按理论框架中的SecondLevel筛选。">i</span></span><select id="interpretSecond"><option value="ALL">全部二级维度</option></select></label></div>
+          <article class="card"><div class="card-head"><div class="card-title"><h2>分类方向解释字典</h2><button class="info-tip" type="button" data-tip="P解释条件内端点偏好；E解释同题组条件变化；平均E是有效题组描述均值；D是覆盖充分后的正式分类汇总。">i</button></div><button class="btn btn-quiet btn-small" id="exportInterpretationCsv">导出解释字典</button></div><div class="table-wrap"><table class="interpret-table"><thead><tr><th>决策 / 子测验</th><th>二级维度</th><th>三级分类</th><th>P高 / 正P</th><th>P低 / 负P</th><th>正E</th><th>负E</th><th>正D</th><th>负D</th><th>汇总限制</th></tr></thead><tbody id="frameworkInterpretationTable"></tbody></table></div></article>
+        </div>
+      </section>
+
+      <section class="view" id="quality" data-title="测量质量" data-eyebrow="有效性、稳健性与题目决策" data-description="检查回答有效性、重复一致性、位置稳健性、模型区分能力和逐题处理状态。">
+        <div class="subtabs" data-tab-group="quality"><button class="subtab is-active" type="button" data-panel="quality-validity">数据质量</button><button class="subtab" type="button" data-panel="quality-reliability">重复与区分</button><button class="subtab" type="button" data-panel="quality-cards">题目决策</button></div>
+        <div class="subpanel is-active" id="quality-validity" data-panel-group="quality">
+          <div class="metric-grid compact" id="qualityMetrics"></div>
+          <div class="two-col"><article class="card"><div class="card-head"><div class="card-title"><h2>最终状态构成</h2><button class="info-tip" type="button" data-tip="统计最终 VALID、REPAIRED_VALID 和各类无效状态；技术失败单独识别。">i</button></div></div><div id="statusChart" class="chart"></div></article><article class="card"><div class="card-head"><div class="card-title"><h2>首次异常类型</h2><button class="info-tip" type="button" data-tip="展示首次回答的漏项、重复、并列、拒答或解析失败，用于定位格式问题。">i</button></div></div><div id="invalidChart" class="chart"></div></article></div>
+          <article class="card"><div class="card-head"><div class="card-title"><h2>分层有效率</h2><button class="info-tip" type="button" data-tip="按模型、子测验和三级分类分层统计，不把 TECH_ERROR 计入模型回答有效率分母。">i</button></div><button class="btn btn-quiet btn-small" id="exportQualityCsv">导出质量 CSV</button></div><div class="table-wrap"><table><thead><tr><th>层级</th><th>对象</th><th>记录数</th><th>首次有效率</th><th>修复后有效率</th><th>技术失败率</th><th>状态</th></tr></thead><tbody id="qualityTable"></tbody></table></div></article>
+        </div>
+        <div class="subpanel" id="quality-reliability" data-panel-group="quality">
+          <div class="metric-grid compact" id="reliabilityMetrics"></div>
+          <div class="two-col"><article class="card"><div class="card-head"><div class="card-title"><h2>首选重复一致性</h2><button class="info-tip" type="button" data-tip="每个 ItemID 内，众数首选出现次数除以有效重复数。">i</button></div></div><div id="reliabilityChart" class="chart tall-chart"></div></article><article class="card"><div class="card-head"><div class="card-title"><h2>模型画像相似性</h2><button class="info-tip" type="button" data-tip="使用共享三级分类平均 P 构成向量，矩阵单元为 Pearson r。">i</button></div></div><div id="similarityHeatmap" class="chart tall-chart"></div><p class="chart-note" id="similarityNote"></p></article></div>
+          <article class="card"><div class="card-head"><div class="card-title"><h2>ItemID严格重复完整性</h2><button class="info-tip" type="button" data-tip="正式E要求每个ItemID恰有5条有效记录且RepeatIndex严格为1、2、3、4、5；RunID和导入批次不会增加计划重复数。">i</button></div></div><div class="table-wrap"><table><thead><tr><th>分析模型</th><th>题库</th><th>ItemID</th><th>有效/计划</th><th>P均值</th><th>P标准差</th><th>排列数</th><th>状态</th><th>原因</th></tr></thead><tbody id="itemRepeatTable"></tbody></table></div></article>
+          <article class="card"><div class="card-head"><div class="card-title"><h2>位置随机化总体诊断</h2><button class="info-tip" type="button" data-tip="按AnalysisModelKey×BankDatasetID汇总六种排列以及显示位置1/2/3成为首选的比例；同时给出ItemID内比例再等权平均的控制结果，不设未经预登记的红黄绿阈值。">i</button></div></div><div class="table-wrap"><table><thead><tr><th>分析模型</th><th>题库</th><th>排列覆盖</th><th>位置1首选</th><th>位置2首选</th><th>位置3首选</th><th>控制ItemID后1/2/3</th><th>可诊断ItemID</th><th>状态</th></tr></thead><tbody id="positionDiagnosticsTable"></tbody></table></div></article>
+          <article class="card"><div class="card-head"><div class="card-title"><h2>配对模型差异</h2><button class="info-tip" type="button" data-tip="在相同 CategoryID 与 GroupID 上匹配两个模型的平均 P，再计算配对差与符号翻转检验。">i</button></div></div><div class="table-wrap"><table><thead><tr><th>子测验 / 分类</th><th>模型 A</th><th>模型 B</th><th>匹配题组</th><th>平均差</th><th>95% CI</th><th>置换 p</th><th>Holm p</th></tr></thead><tbody id="modelComparisonTable"></tbody></table></div></article>
+        </div>
+        <div class="subpanel" id="quality-cards" data-panel-group="quality">
+          <div class="card-toolbar"><input id="cardSearch" type="search" placeholder="搜索 GroupID、ItemID 或分类" aria-label="搜索题目决策卡"><select id="cardStatus"><option value="ALL">全部处理状态</option><option value="REVIEW">数据问题复核</option><option value="MORE_DATA">补充数据</option><option value="PROVISIONAL">初步可用</option><option value="BLOCKED">计分阻断</option></select><button class="btn btn-quiet btn-small" id="exportCardsCsv">导出决策卡</button><span class="info-tip static" tabindex="0" data-tip="决策卡只汇总数据证据，不替代专家内容效度判断。">i</span></div>
+          <div class="decision-card-list" id="decisionCards"></div>
+        </div>
+      </section>
+
+      <section class="view" id="audit" data-title="审计与公式" data-eyebrow="计算口径与数据链路" data-description="按结果批次核验两个必需CSV、题库元数据与评分映射，并查看平台使用的全部统计公式。">
+        <div class="subtabs" data-tab-group="audit"><button class="subtab is-active" type="button" data-panel="audit-trace">链路审计</button><button class="subtab" type="button" data-panel="audit-methods">公式字典</button></div>
+        <div class="subpanel is-active" id="audit-trace" data-panel-group="audit">
+          <div class="audit-score" id="auditScore"></div>
+          <article class="card"><div class="card-head"><div class="card-title"><h2>文件与关键字段核验</h2><button class="info-tip" type="button" data-tip="检查两个CSV的批次完整性、排序复合键、RepeatIndex、L映射、ModelConfigID与版本字段；JSONL/JSON不属于分析依赖。">i</button></div></div><div class="audit-list" id="auditList"></div></article>
+          <article class="card"><div class="card-head"><div class="card-title"><h2>题库与模型身份</h2><button class="info-tip" type="button" data-tip="展示BankDatasetID/BankPart/BankContentHash，以及MODEL_IDENTITY_V2对Raw ModelConfigID的唯一值补全、歧义阻断和明确配置差异审计。">i</button></div></div><div class="table-wrap"><table><thead><tr><th>类型</th><th>分析身份</th><th>组成/原始身份</th><th>内容指纹/参数指纹</th><th>状态</th><th>说明</th></tr></thead><tbody id="identityAuditTable"></tbody></table></div></article>
+          <article class="card"><div class="card-head"><div class="card-title"><h2>可追踪记录抽样</h2><button class="info-tip" type="button" data-tip="从复合键追踪到DisplayedRanking、SourceRanking、LogicalRanking、映射状态、重复状态和P。">i</button></div><button class="btn btn-quiet btn-small" id="exportRowsCsv">导出分析明细</button></div><div class="table-wrap"><table><thead><tr><th>结果批次</th><th>RequestID</th><th>分析模型</th><th>ItemID</th><th>Permutation</th><th>显示排序</th><th>原始排序</th><th>逻辑排序</th><th>映射/重复</th><th>P</th></tr></thead><tbody id="auditRows"></tbody></table></div></article>
+        </div>
+        <div class="subpanel" id="audit-methods" data-panel-group="audit">
+          <div class="formula-dictionary">
+            <article class="formula-row"><div><b>P<sub>gjr</sub></b><span>单次方向偏好</span></div><code>[rank(L−) − rank(L+)] / (K−1)</code><p>DIRECTIONAL_RANK；无效回答缺失。</p></article>
+            <article class="formula-row"><div><b>P̄<sub>gj</sub></b><span>条件内平均偏好</span></div><code>mean<sub>ItemID</sub>[mean<sub>r=1..5</sub>(P)]</code><p>先在ItemID内固定汇总5次，再在AnalysisModelKey×GroupID×Condition内对ItemID等权。</p></article>
+            <article class="formula-row"><div><b>P̄<sub>d</sub></b><span>三级分类平均P</span></div><code>Σ<sub>g</sub>P̄<sub>g</sub> / G<sub>valid</sub></code><p>以GroupID等权形成画像坐标；只有端点语义一致时才允许继续汇总到二级维度。</p></article>
+            <article class="formula-row"><div><b>E<sub>gq</sub></b><span>题组条件效应</span></div><code>Σ<sub>j</sub>w<sub>qj</sub>P̄<sub>gj</sub> / 2</code><p>对比权重合法，且必要条件中的每个ItemID都严格具备5次有效重复。</p></article>
+            <article class="formula-row"><div><b>Ē<sub>dq</sub></b><span>有效题组平均E</span></div><code>Σ<sub>g∈valid</sub>E<sub>gq</sub> / G<sub>valid</sub></code><p>描述性均值，不受分类80%覆盖门槛替换；覆盖不足时仍不得称为D。</p></article>
+            <article class="formula-row"><div><b>D<sub>dq</sub></b><span>分类汇总效应</span></div><code>Σ<sub>g</sub>a<sub>g</sub>E<sub>gq</sub> / Σ<sub>g</sub>a<sub>g</sub></code><p>当前元数据指定题组等权 a<sub>g</sub>=1；分类覆盖≥80%。</p></article>
+            <article class="formula-row"><div><b>E<sub>q</sub>(Y)</b><span>通用析因效应</span></div><code>Σ<sub>j</sub>w<sub>qj</sub>Ȳ<sub>j</sub> / (Y<sub>max</sub>−Y<sub>min</sub>)</code><p>Y可为P、首选指示、两两偏好或标准化排名；正负权重各归一到±1。</p></article>
+            <article class="formula-row"><div><b>E<sub>A×B</sub></b><span>完整交叉交互</span></div><code>Σ<sub>ij</sub>W<sub>ij</sub>Ȳ<sub>ij</sub> / (Y<sub>max</sub>−Y<sub>min</sub>)</code><p>完整2×2或2×2×2设计生成全部主效应、二阶和三阶交互；未登记结果不输出正式D。</p></article>
+            <article class="formula-row"><div><b>β<sub>x|a</sub></b><span>数值因子简单斜率</span></div><code>P̄ = α<sub>a</sub> + β<sub>x|a</sub>(x−x<sub>ref</sub>)</code><p>风险A1/B1无论完整或部分交叉，均按每个基础概率水平的实际CostRate取值拟合；平台报告ΔP/0.01 CostRate。</p></article>
+            <article class="formula-row"><div><b>Δβ</b><span>端点斜率交互</span></div><code>β<sub>x|a=high</sub> − β<sub>x|a=low</sub></code><p>比较高、低基础概率的成本斜率；属于未登记探索性交互，不替代四个预登记E/D。</p></article>
+            <article class="formula-row"><div><b>Missing</b><span>析因单元缺失分解</span></div><code>结构未设计=笛卡尔单元−题库计划单元；数据缺失=计划单元−观察单元</code><p>结构上未设计的风险组合不进入运行缺失率；只有计划单元未观察才属于数据缺失。</p></article>
+            <article class="formula-row"><div><b>Coverage</b><span>有效题组覆盖</span></div><code>|V<sub>d</sub>| / G<sub>d</sub></code><p>分子为可计算 E 的 GroupID，分母为题库计划 GroupID。</p></article>
+            <article class="formula-row"><div><b>ValidRate</b><span>模型回答有效率</span></div><code>(VALID + REPAIRED_VALID) / 非技术响应</code><p>TECH_ERROR 不进入模型有效率分母。</p></article>
+            <article class="formula-row"><div><b>RetryRate</b><span>格式重试率</span></div><code>N<sub>RetryUsed=1</sub> / N<sub>非技术响应</sub></code><p>按最终运行记录计数；技术失败不进入分母。</p></article>
+            <article class="formula-row"><div><b>TechnicalRate</b><span>技术失败率</span></div><code>N<sub>TECH_ERROR</sub> / N<sub>全部任务</sub></code><p>仅反映请求、网络或程序层失败，不解释为模型无效回答。</p></article>
+            <article class="formula-row"><div><b>AuditScore</b><span>链路审计得分</span></div><code>round{100 × (N<sub>通过</sub> + 0.5N<sub>警告</sub>) / N<sub>检查项</sub>}</code><p>仅用于概括跨文件可追踪性；失败项计0分，不作为心理测量指标。</p></article>
+            <article class="formula-row"><div><b>95% CI</b><span>题组均值区间</span></div><code>x̄ ± t<sub>.975,n−1</sub> · s / √n</code><p>以 GroupID 效应或配对差为分析单位。</p></article>
+            <article class="formula-row"><div><b>A<sub>top</sub></b><span>首选一致率</span></div><code>max<sub>l</sub> count(TopChoice=l) / R</code><p>同一 ItemID 的有效重复中，众数首选所占比例。</p></article>
+            <article class="formula-row"><div><b>A<sub>rank</sub></b><span>完整排序一致率</span></div><code>max<sub>π</sub> count(Ranking=π) / R</code><p>对完整 L1/L2/L3 排序字符串计算众数比例。</p></article>
+            <article class="formula-row"><div><b>τ</b><span>Kendall 排序一致</span></div><code>(C − D) / (C + D)</code><p>对有效重复的完整排序两两计算后取均值。</p></article>
+            <article class="formula-row"><div><b>DBWVR</b><span>描述性模型间/模型内方差比</span></div><code>mean Var<sub>between AnalysisModelKey</sub> / mean Var<sub>within AnalysisModelKey</sub></code><p>按BankDatasetID×ItemID匹配；仅作描述，不称ICC。模型内方差为0时不定义。</p></article>
+            <article class="formula-row"><div><b>r</b><span>画像相似性</span></div><code>Σ(x−x̄)(y−ȳ) / √[Σ(x−x̄)²Σ(y−ȳ)²]</code><p>在两个模型共享的三级分类平均 P 上计算。</p></article>
+            <article class="formula-row"><div><b>p<sub>perm</sub></b><span>符号翻转检验</span></div><code>Pr(|mean(s<sub>g</sub>x<sub>g</sub>)| ≥ |mean(x<sub>g</sub>)|)</code><p>以 GroupID 为单位；n≤16 精确枚举，n&gt;16 固定种子蒙特卡洛。</p></article>
+            <article class="formula-row"><div><b>p<sub>Holm</sub></b><span>多重比较校正</span></div><code>max<sub>j≤i</sub>[(m−j+1)p<sub>(j)</sub>]</code><p>在同一 ModelConfig×子测验的对比族内校正。</p></article>
+            <article class="formula-row"><div><b>Ē<sub>Domain</sub></b><span>所选情境描述均值</span></div><code>mean(E<sub>gq</sub> | Domain∈S)</code><p>仅为SelectedDomainMeanE/DomainSubsetMeanE；不继承正式D、coverage、sign-flip或Holm标签。</p></article>
+            <article class="formula-row"><div><b>GapΔP</b><span>AI—Human原始对比差</span></div><code>rawShift<sub>AI</sub> − rawShift<sub>Human</sub></code><p>Human使用相同ContrastWeights；先参与者内Item等权，再跨参与者等权。</p></article>
+            <article class="formula-row"><div><b>GapE</b><span>AI—Human标准化条件效应差</span></div><code>E<sub>AI</sub> − E<sub>Human</sub> = GapΔP / 2</code><p>接近0只表示条件效应接近，不等于统计等效，也不表示正确。</p></article>
+            <article class="formula-row"><div><b>SRI<sub>95</sub></b><span>Human Gap情境重采样区间</span></div><code>percentile<sub>.025,.975</sub>{mean(GapΔP<sub>g*</sub>)}</code><p>独立Human模块按GroupID有放回抽样5000次、固定种子；旧E/D Bootstrap保持冻结。</p></article>
+            <article class="formula-row"><div><b>d</b><span>Cohen's d</span></div><code>mean(E<sub>g</sub>) / SD(E<sub>g</sub>)</code><p>有效Group少于2、SD=0或正式覆盖不足时返回NA；dScore仍是正式D。</p></article>
+            <article class="formula-row"><div><b>g</b><span>Hedges' g</span></div><code>[1 − 3/(4df−1)] × d</code><p>小样本偏差修正；配对模型E差另用cohenDz/hedgesGz。</p></article>
+            <article class="formula-row"><div><b>ICC(1,k)</b><span>一元随机平均测量ICC</span></div><code>(MS<sub>B</sub> − MS<sub>W</sub>) / MS<sub>B</sub></code><p>独立于DBWVR；只对合法DIRECTIONAL estimand及足够目标/模型计算。</p></article>
+            <article class="formula-row"><div><b>x*</b><span>P=0排序倾向拐点</span></div><code>x<sub>1</sub> + P<sub>1</sub>/(P<sub>1</sub>−P<sub>2</sub>) × (x<sub>2</sub>−x<sub>1</sub>)</code><p>仅相邻真实测试点实际跨0时插值；多次跨0报告NON_MONOTONIC，范围外不外推。</p></article>
+            <article class="formula-row"><div><b>w(p)</b><span>Prelec概率权重</span></div><code>exp{−β[−ln(p)]<sup>α</sup>}</code><p>仅用于从风险文献参数推导外部复合行为参照；不是当前题库同题Human结果。</p></article>
+          </div>
+          <article class="card method-table"><div class="card-head"><div class="card-title"><h2>结构与评分路由</h2><button class="info-tip" type="button" data-tip="ConditionStructure 和 ScoreFamily 决定可使用的统计量；C1/C2/C3 本身不自动表示顺序。">i</button></div></div><div class="table-wrap"><table><thead><tr><th>结构 / 评分族</th><th>平台计算</th><th>不执行</th></tr></thead><tbody><tr><td><b>DIRECTIONAL_RANK</b></td><td>P、P̄、预登记 E、覆盖充分时 D</td><td>不把无效回答记0</td></tr><tr><td><b>NOMINAL_RANK</b></td><td>完整排序、各 L 排名、TopChoice 概率</td><td>不编码连续高低分</td></tr><tr><td><b>ORDERED</b></td><td>元数据登记的相邻、端点或趋势对比</td><td>不因 C1/C2/C3 名称默认有序</td></tr><tr><td><b>CATEGORICAL</b></td><td>命名对比或条件分布</td><td>不计算未登记线性趋势</td></tr><tr><td><b>FACTORIAL · 完整交叉</b></td><td>设计矩阵主效应、二阶/三阶交互；数值因子另报响应曲线与简单斜率；登记效应另行输出D</td><td>不把组合条件排成单一序列；未登记效应不称正式D</td></tr><tr><td><b>FACTORIAL · 部分交叉数值</b></td><td>计划单元描述、参考点模型、简单斜率、端点斜率交互及预登记E/D</td><td>不补造结构上未设计的因子单元</td></tr><tr><td><b>CNI 三选项扩展</b></td><td>7个结果变量×7个主效应/交互的探索性响应画像</td><td>题干—后果冲突关闭前不套用标准二元 C/N/I 或正式D</td></tr></tbody></table></div></article>
+        </div>
+      </section>
+
+      <section class="view" id="human-reference" data-title="人类参照与外部效度" data-eyebrow="Domain依赖、同题Human与风险文献参照" data-description="区分同题人类被试与文献推导外部参照；Human不是答案，Gap不是误差率，Risk文献不是同题实验。">
+        <div class="subtabs" data-tab-group="human-reference"><button class="subtab is-active" type="button" data-panel="human-domain">Domain Profile</button><button class="subtab" type="button" data-panel="human-same-task">Same-task Human</button><button class="subtab" type="button" data-panel="human-risk-reference">Risk Literature</button><button class="subtab" type="button" data-panel="human-effect-size">d/g 与 ICC</button></div>
+
+        <div class="subpanel is-active" id="human-domain" data-panel-group="human-reference">
+          <div class="metric-grid compact" id="domainMetrics"></div>
+          <article class="card"><div class="card-head"><div class="card-title"><h2>Domain覆盖与QA</h2><button class="info-tip" type="button" data-tip="MIXED_DOMAIN_GROUP表示题组条件跨情境，并非数据损坏；旧P/E/D继续，仅禁止把整组E归入单一Domain。">i</button></div></div><div class="table-wrap"><table><thead><tr><th>子测验</th><th>Domain</th><th>记录</th><th>Item</th><th>Group</th><th>来源</th></tr></thead><tbody id="domainCatalogTable"></tbody></table></div></article>
+          <article class="card"><div class="card-head"><div class="card-title"><h2>同一Category与Condition的Domain P画像</h2><button class="info-tip" type="button" data-tip="只在同一BankDatasetID与Category内横向比较Source_Domain；不把跨题库近义Domain自动合并。">i</button></div></div><div class="table-wrap"><table><thead><tr><th>模型/子测验</th><th>分类</th><th>Domain</th><th>Condition</th><th>Mean P / SD</th><th>Item</th><th>Group</th><th>Valid N</th></tr></thead><tbody id="domainConditionTable"></tbody></table></div></article>
+          <article class="card"><div class="card-head"><div class="card-title"><h2>同一Category与Contrast的Domain E</h2><button class="info-tip" type="button" data-tip="直接消费原groupEffects中的正式E；任意Domain子集只形成描述性SelectedDomainMeanE，不生成新的正式D。">i</button></div></div><div class="table-wrap"><table><thead><tr><th>模型</th><th>子测验/分类</th><th>Domain</th><th>GroupID</th><th>Contrast</th><th>E</th><th>Domain g</th><th>状态</th></tr></thead><tbody id="domainEffectTable"></tbody></table></div></article>
+          <div class="two-col"><article class="card"><div class="card-head"><div class="card-title"><h2>Domain重复稳定性</h2></div></div><div class="table-wrap"><table><thead><tr><th>模型/子测验</th><th>Domain</th><th>Item</th><th>Kendall τ</th><th>P SD</th><th>方向翻转</th></tr></thead><tbody id="domainReliabilityTable"></tbody></table></div></article><article class="card"><div class="card-head"><div class="card-title"><h2>Domain Heterogeneity Summary</h2></div></div><div class="table-wrap"><table><thead><tr><th>分类/Contrast</th><th>Domain数</th><th>min–max</th><th>SD</th><th>IQR</th><th>方向一致</th></tr></thead><tbody id="domainHeterogeneityTable"></tbody></table></div></article></div>
+        </div>
+
+        <div class="subpanel" id="human-same-task" data-panel-group="human-reference">
+          <div class="evidence-boundary"><b>SAME_TASK_HUMAN_SAMPLE</b><span>模糊、跨期与CNI为同题被试参照。接近Human不等于正确，Gap≈0不等于已证明等效。</span></div>
+          <div class="metric-grid compact" id="humanMetrics"></div>
+          <article class="card"><div class="card-head"><div class="card-title"><h2>方向题 AI—Human Group Gap</h2><button class="info-tip" type="button" data-tip="AI直接复用现有conditionMeans与groupEffects；Human先参与者内等权，再跨参与者等权，并使用同一ContrastWeights。">i</button></div></div><div class="table-wrap"><table><thead><tr><th>模型/子测验</th><th>分类</th><th>Domain</th><th>Group</th><th>Contrast</th><th>AI ΔP</th><th>Human ΔP</th><th>GapΔP</th><th>AI E</th><th>Human E</th><th>GapE</th><th>状态</th></tr></thead><tbody id="humanGapTable"></tbody></table></div></article>
+          <article class="card"><div class="card-head"><div class="card-title"><h2>Human分类Gap与Scenario Resampling</h2><button class="info-tip" type="button" data-tip="仅Human Gap模块固定当前GroupID集合并按GroupID有放回重采样5000次；不启用旧E/D Bootstrap。">i</button></div></div><div class="table-wrap"><table><thead><tr><th>模型/子测验</th><th>分类/Contrast</th><th>AI ΔP</th><th>Human ΔP</th><th>GapΔP</th><th>GapE</th><th>Group覆盖</th><th>95%区间</th><th>状态</th></tr></thead><tbody id="humanGapSummaryTable"></tbody></table></div></article>
+          <article class="card"><div class="card-head"><div class="card-title"><h2>SINGLE题P水平比较</h2><button class="info-tip" type="button" data-tip="B3等SINGLE结构不存在条件效应，不计算GapΔP；只比较P水平、首选率与平均名次。">i</button></div></div><div class="table-wrap"><table><thead><tr><th>模型/分类</th><th>Domain</th><th>Group/Condition</th><th>AI / Human P</th><th>P水平差</th><th>AI Top L1/L2/L3</th><th>Human Top L1/L2/L3</th><th>AI Mean Rank</th><th>Human Mean Rank</th></tr></thead><tbody id="humanSingleTable"></tbody></table></div></article>
+          <article class="card"><div class="card-head"><div class="card-title"><h2>NOMINAL策略比较</h2><button class="info-tip" type="button" data-tip="A3E/B5不计算P、E或GapΔP；只比较L1/L2/L3首选率与平均名次。">i</button></div></div><div class="table-wrap"><table><thead><tr><th>模型/分类</th><th>Domain</th><th>Group/Condition</th><th>AI Top L1/L2/L3</th><th>Human Top L1/L2/L3</th><th>比例差</th><th>AI Mean Rank</th><th>Human Mean Rank</th></tr></thead><tbody id="humanNominalTable"></tbody></table></div></article>
+          <article class="card"><div class="card-head"><div class="card-title"><h2>CNI探索性Human比较</h2><button class="info-tip" type="button" data-tip="当前元数据约束下只描述Pr(L1排在L2之前)及L3首选；不得进入正式D，不得宣称C/N/I参数。">i</button></div></div><div class="table-wrap"><table><thead><tr><th>类型</th><th>模型/Domain</th><th>Group/Condition</th><th>AI</th><th>Human</th><th>Gap</th><th>证据状态</th></tr></thead><tbody id="cniHumanTable"></tbody></table></div></article>
+        </div>
+
+        <div class="subpanel" id="human-risk-reference" data-panel-group="human-reference">
+          <div class="evidence-boundary literature"><b>LITERATURE_DERIVED_REFERENCE</b><span>默认先看四类应用情境等权的维度总体，再看单独情境；30国、2939名学生的总体模型是外部参照，不是当前风险题库的同题Human样本。</span></div>
+          <div class="metric-grid compact" id="riskReferenceMetrics"></div>
+          <article class="card"><div class="card-head"><div class="card-title"><h2>某AI × 某风险维度的综合曲线</h2><button class="info-tip" type="button" data-tip="主视图先在每个ItemID内汇总重复，再在同一横轴点对四个应用情境GroupID等权。A1/B1的三个基础概率分别画图、分别求拐点，绝不合并。">i</button></div><div class="card-head-actions"><select id="riskCurveScope" aria-label="选择综合或分情境曲线"><option value="OVERALL">维度综合（四情境等权，主结果）</option><option value="GROUP">分应用情境 / GroupID（异质性）</option></select><select id="riskCurveSelector" aria-label="选择AI和风险维度"></select></div></div><div id="riskReferenceChart" class="risk-chart-stack"></div><p class="chart-note" id="riskReferenceNote"></p></article>
+          <article class="card"><div class="card-head"><div class="card-title"><h2>P=0排序倾向拐点与外部参照</h2><button class="info-tip" type="button" data-tip="综合结果要求四个应用情境和全部计划横轴点覆盖完整。A1/B1每个基础概率单列；不存在所谓三种基础概率的共同拐点。">i</button></div></div><div class="table-wrap"><table><thead><tr><th>模型/分支</th><th>分析层级</th><th>情境/基础概率</th><th>点覆盖</th><th>真实区间</th><th>插值/不等式</th><th>状态</th><th>30国总体模型参照</th><th>差值</th><th>二元桥接</th><th>适用性</th></tr></thead><tbody id="riskThresholdTable"></tbody></table></div></article>
+          <article class="card"><div class="card-head"><div class="card-title"><h2>六种完整排序分布（逐横轴点）</h2><button class="info-tip" type="button" data-tip="六种排序不跨成本率合并，用来检查L2位于首位或中间的情况，以及P=(rankL1-rankL3)/2没有表达出的结构。">i</button></div></div><div class="table-wrap"><table><thead><tr><th>模型/分支</th><th>层级/情境</th><th>基础概率 / 横轴</th><th>L1&gt;L2&gt;L3</th><th>L1&gt;L3&gt;L2</th><th>L2&gt;L1&gt;L3</th><th>L2&gt;L3&gt;L1</th><th>L3&gt;L1&gt;L2</th><th>L3&gt;L2&gt;L1</th><th>L2首位率</th><th>众数</th><th>覆盖</th></tr></thead><tbody id="riskRankingTable"></tbody></table></div></article>
+        </div>
+
+        <div class="subpanel" id="human-effect-size" data-panel-group="human-reference">
+          <div class="metric-grid compact" id="effectSizeMetrics"></div>
+          <article class="card"><div class="card-head"><div class="card-title"><h2>Cohen's d / Hedges' g</h2><button class="info-tip" type="button" data-tip="dScore仍为正式D；cohenD/hedgesG以有效Group E的样本SD标准化。n&lt;2、SD=0或覆盖不足时返回NA。">i</button></div></div><div class="table-wrap"><table><thead><tr><th>模型/子测验</th><th>分类/Contrast</th><th>D</th><th>Mean E / SD</th><th>n / coverage</th><th>Cohen d</th><th>Hedges g</th><th>标签</th><th>状态</th></tr></thead><tbody id="effectSizeTable"></tbody></table></div></article>
+          <article class="card"><div class="card-head"><div class="card-title"><h2>模型间配对 E 效应量</h2><button class="info-tip" type="button" data-tip="与旧modelComparisons的Group mean P不同；本表只对相同Bank×Category×Contrast×GroupID的E_A−E_B计算Cohen dz/Hedges gz。">i</button></div></div><div class="table-wrap"><table><thead><tr><th>子测验/分类</th><th>模型A</th><th>模型B</th><th>匹配Group</th><th>Mean diff / SD</th><th>Cohen dz</th><th>Hedges gz</th><th>状态</th></tr></thead><tbody id="modelEffectSizeTable"></tbody></table></div></article>
+          <article class="card"><div class="card-head"><div class="card-title"><h2>ICC(1,5)</h2><button class="info-tip" type="button" data-tip="ICC是独立新增对象。DBWVR仍是DescriptiveBetweenWithinVarianceRatio；单一Group×3条件、NOMINAL和元数据阻断CNI不计算ICC。">i</button></div></div><div class="table-wrap"><table><thead><tr><th>类型/范围</th><th>模型/题库</th><th>分类/Group/Domain</th><th>目标数</th><th>ICC(1,5)</th><th>状态</th><th>原因</th></tr></thead><tbody id="iccTable"></tbody></table></div></article>
+        </div>
+      </section>
+
+      <section class="view" id="export" data-title="导出报告" data-eyebrow="全部模型、全部模块与完整统计明细" data-description="导出范围固定为本次分析中的全部模型和全部模块，不受顶部模型、子测验、三级分类筛选器以及表格分页影响。">
+        <article class="card export-empty" id="exportEmpty">
+          <div class="card-title"><h2>尚无可导出的分析结果</h2><button class="info-tip" type="button" data-tip="先在数据导入工作区完成至少一个批次的两个CSV导入并运行分析。">i</button></div>
+          <p>完成分析后，此处将生成全量报告与统计数据导出项。</p>
+        </article>
+
+        <div class="is-hidden" id="exportReady">
+          <div class="export-scope-grid" id="exportScopeMetrics"></div>
+
+          <div class="export-action-grid">
+            <article class="card export-action-card">
+              <header><span class="export-format">PDF</span><button class="info-tip" type="button" data-tip="生成完整打印版报告，并打开系统打印窗口；在目标打印机中选择“另存为 PDF”。">i</button></header>
+              <h2>全量 PDF 报告</h2>
+              <p>包含全部模型的数据概况、P/P̄、E/Ē/D、画像、FACTORIAL、非方向评分、测量质量、题目决策、审计及公式附录。</p>
+              <button class="btn btn-primary export-primary-button" id="exportFullPdf" type="button">生成并导出 PDF</button>
+            </article>
+            <article class="card export-action-card">
+              <header><span class="export-format html">HTML</span><button class="info-tip" type="button" data-tip="生成一个内嵌样式、无需联网即可打开的自包含HTML文件；所有表格均为完整数据。">i</button></header>
+              <h2>全量 HTML 报告</h2>
+              <p>报告结构与 PDF 一致，适合保留交付、浏览器检索以及复制表格；不会截断到当前页面显示的前若干行。</p>
+              <button class="btn btn-primary export-primary-button" id="exportFullHtml" type="button">导出自包含 HTML</button>
+            </article>
+            <article class="card export-action-card">
+              <header><span class="export-format csv">CSV</span><button class="info-tip" type="button" data-tip="把全部统计模块纵向合并为一份UTF-8 CSV，以Dataset字段区分数据表；不受界面筛选影响。">i</button></header>
+              <h2>全量统计 CSV</h2>
+              <p>覆盖批次与运行统计、分层质量、P/P̄、画像、E/Ē/D、注册表、析因与非方向结果、重复一致性、模型比较、题目决策和审计。</p>
+              <button class="btn btn-primary export-primary-button" id="exportFullCsv" type="button">导出全量统计 CSV</button>
+            </article>
+          </div>
+
+          <article class="card export-dataset-card">
+            <div class="card-head"><div class="card-title"><h2>统计 CSV 数据表</h2><button class="info-tip" type="button" data-tip="默认选中全部数据表。可按分析目的保留部分模块，并导出为一份带Dataset标识的CSV；每个模块也可单独导出。">i</button></div><div class="export-table-actions"><button class="btn btn-quiet btn-small" id="selectAllExportDatasets" type="button">全选</button><button class="btn btn-quiet btn-small" id="clearExportDatasets" type="button">清空</button><button class="btn btn-secondary btn-small" id="exportSelectedCsv" type="button">导出所选 CSV</button></div></div>
+            <div class="table-wrap"><table><thead><tr><th class="check-col">选择</th><th>数据表</th><th>覆盖内容</th><th>记录数</th><th>单表导出</th></tr></thead><tbody id="exportDatasetTable"></tbody></table></div>
+          </article>
+
+          <article class="card export-coverage-card">
+            <div class="card-head"><div class="card-title"><h2>全量导出范围</h2><button class="info-tip" type="button" data-tip="这里的“全量”指跨越全部ModelConfig、结果批次、子测验、三级分类和题目，不读取当前界面筛选值。">i</button></div><span class="formula-chip">界面筛选不影响导出</span></div>
+            <div class="export-coverage-grid">
+              <div><b>偏好与效应</b><span>单次P、条件内P̄、分类平均P、题组E、有效题组平均E、覆盖合格D及其解释与公式代入值</span></div>
+              <div><b>结构化评分</b><span>ORDERED、CATEGORICAL、FACTORIAL、NOMINAL_RANK与CUSTOM的适用结果、阻断理由和完整覆盖状态</span></div>
+              <div><b>测量质量</b><span>首次/修复后有效率、重试和技术失败、重复一致性、位置稳健性、模型内外方差、模型差异和画像相似性</span></div>
+              <div><b>题目与审计</b><span>全部GroupID题目决策卡、标准化分析明细、批次清单、两个CSV交叉核验、评分映射与计算公式字典</span></div>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="export-popover is-hidden" id="exportPopover" role="menu"><button id="openExportWorkspace" type="button">打开全量导出工作区</button><button id="exportHtml" type="button">导出全量 HTML 报告</button><button id="exportPdf" type="button">导出全量 PDF（系统打印）</button><button id="exportAllCsv" type="button">导出全量统计 CSV</button><button id="exportPMenu" type="button">导出当前筛选单次 P</button><button id="exportPMeanMenu" type="button">导出当前筛选平均 P</button><button id="exportEMenu" type="button">导出当前筛选 E</button><button id="exportDMenu" type="button">导出当前筛选平均 E / D</button><button id="exportFactorialMenu" type="button">导出全部 FACTORIAL</button><button id="exportCoverageMenu" type="button">导出当前筛选覆盖表</button></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div class="print-report" id="printReport"></div>
+  <script src="js/model-order.js"></script><script src="js/csv.js"></script><script src="js/batch-import.js"></script><script src="js/domain-analysis.js"></script><script src="js/effect-sizes.js"></script><script src="js/icc.js"></script><script src="js/analysis.js"></script><script src="js/human-reference.js"></script><script src="js/risk-reference.js"></script><script src="js/interpretation.js"></script><script src="js/export.js"></script><script src="js/charts.js"></script><script src="js/app.js"></script>
+</body>
+</html>

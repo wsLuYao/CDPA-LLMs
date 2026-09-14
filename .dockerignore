@@ -1,0 +1,14 @@
+.git
+.gitignore
+__pycache__
+*.py[cod]
+.pytest_cache
+tests
+results
+projects
+data
+backups
+*.zip
+*.tar.gz
+.env
+.env.backup.*
